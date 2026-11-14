@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Ndeocaki · Hecho a mano</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Neceseres, bolsos y capas de cumpleaños cosidos a mano. Elige tu pieza y tu tela.">
+<link rel="icon" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/icono.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ndeocaki">
+<meta name="theme-color" content="#ffffff">
+<style>
+  :root{
+    --bg:#ffffff;
+    --mist:#f6f3f4;
+    --blush:#fbe6ee;
+    --ink:#1d1d1f;
+    --ink-2:#6e6e73;
+    --line:rgba(0,0,0,.09);
+    --hilo:#c0263f;
+    --hilo-2:#a51d34;
+    --danger:#b3261e;
+    --r-xl:28px; --r-lg:20px; --r-md:14px;
+    --ease:cubic-bezier(.2,.7,.2,1);
+    --sys:-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; -webkit-text-size-adjust:100%; scroll-padding-top:var(--top-h,170px);}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sys); font-size:17px; line-height:1.47; letter-spacing:-.01em; -webkit-font-smoothing:antialiased;}
+  body.locked{overflow:hidden;}
+  img{max-width:100%; display:block;}
+  a{color:inherit;}
+  button{font:inherit; color:inherit;}
+  h1,h2,h3{margin:0; font-weight:700; letter-spacing:-.025em; text-wrap:balance;}
+  p{margin:0;}
+  .wrap{max-width:1040px; margin:0 auto; padding:0 22px;}
+  :focus-visible{outline:3px solid color-mix(in srgb, var(--hilo) 55%, transparent); outline-offset:3px; border-radius:8px;}
+
+  /* ---------- Botones ---------- */
+  .pill{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px; border:0; cursor:pointer; text-decoration:none;
+    background:linear-gradient(180deg, #d4334e 0%, var(--hilo) 55%, #ad1f37 100%); color:#fff;
+    font-size:17px; font-weight:600; letter-spacing:-.01em; padding:14px 26px; border-radius:980px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.28), 0 1px 2px rgba(120,10,30,.25), 0 10px 24px -10px rgba(192,38,63,.65);
+    transition:transform .18s var(--ease), box-shadow .2s var(--ease), filter .2s;
+  }
+  .pill:hover{filter:brightness(1.05); box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 1px 2px rgba(120,10,30,.25), 0 14px 30px -10px rgba(192,38,63,.7);}
+  .pill:active{transform:scale(.97);}
+  .pill:disabled{opacity:.45; cursor:not-allowed;}
+  .pill.soft{background:rgba(255,255,255,.9); color:var(--hilo); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--hilo) 45%, transparent), 0 6px 18px -12px rgba(0,0,0,.3);}
+  .pill.soft:hover{background:#fff;}
+  .pill.block{width:100%;}
+  .link{color:var(--hilo); text-decoration:none; font-size:17px; background:none; border:0; cursor:pointer; padding:0;}
+  .link:hover{text-decoration:underline;}
+
+  /* ---------- Barra superior + selector ---------- */
+  .top{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.82); -webkit-backdrop-filter:saturate(180%) blur(20px); backdrop-filter:saturate(180%) blur(20px); border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top);}
+  .bar{display:flex; align-items:center; justify-content:space-between; height:52px;}
+  .logo{height:26px; width:auto;}
+  .bag{display:inline-flex; align-items:center; gap:8px; background:none; border:0; cursor:pointer; font-size:14px; color:var(--ink); padding:6px 4px;}
+  .bag svg{width:20px; height:20px;}
+  .bag .n{min-width:20px; height:20px; border-radius:10px; background:var(--hilo); color:#fff; font-size:12px; font-weight:600; display:inline-flex; align-items:center; justify-content:center; padding:0 6px;}
+  .bag .n[data-zero="1"]{background:var(--mist); color:var(--ink-2);}
+
+  .chooser{border-top:1px solid var(--line);}
+  .chooser ul{list-style:none; margin:0 auto; padding:10px 22px 12px; display:flex; gap:6px; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; max-width:1040px; justify-content:safe center;}
+  .chooser ul::-webkit-scrollbar{display:none;}
+  .chooser li{flex:none; scroll-snap-align:start;}
+  .chooser a{display:flex; flex-direction:column; align-items:center; gap:6px; width:84px; text-decoration:none; font-size:12px; color:var(--ink); padding:4px 2px 2px; border-radius:12px;}
+  .chooser img{width:56px; height:56px; object-fit:cover; border-radius:14px; background:var(--mist); transition:transform .25s var(--ease);}
+  .chooser a:hover img{transform:scale(1.06);}
+  .chooser span{line-height:1.2; text-align:center;}
+  .chooser a.on span{color:var(--hilo); font-weight:600;}
+  .chooser a.on img{box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--hilo);}
+
+  /* ---------- Portada: foto a pantalla completa ---------- */
+  .hero{position:relative; height:min(88svh, 900px); min-height:520px; overflow:hidden; color:#fff; display:flex; align-items:flex-end; background:#2a2224 url("img/n-portada-1-fondo.webp") center/cover;}
+  .hero > img{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:50% 50%;}
+  .hero::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(20,10,12,.10) 0%, rgba(20,10,12,.38) 38%, rgba(20,10,12,.72) 100%);}
+  .hero .wrap{position:relative; z-index:1; width:100%; padding-bottom:56px; text-align:center;}
+  .hero .script{height:58px; width:auto; margin:0 auto 14px; filter:invert(1) brightness(2);}
+  .hero h1{font-size:clamp(44px, 8vw, 88px); line-height:1.02; text-shadow:0 2px 24px rgba(0,0,0,.25);}
+  .hero .sub{font-size:clamp(18px, 2.4vw, 25px); color:rgba(255,255,255,.88); margin:14px auto 0; max-width:30ch; letter-spacing:-.015em;}
+  .hero .cta{display:flex; gap:14px; justify-content:center; align-items:center; margin-top:26px; flex-wrap:wrap;}
+  .hero .link{color:#fff;}
+  .hero .scroll{display:block; margin:28px auto 0; width:28px; height:28px; opacity:.8;}
+
+  /* ---------- Producto ---------- */
+  .prod{padding:110px 0 96px; text-align:center;}
+  .prod:nth-of-type(even){background:var(--mist);}
+  .prod .tag{font-size:17px; color:var(--hilo); font-weight:600; margin-bottom:8px; min-height:1px;}
+  .prod h2{font-size:clamp(40px, 6.4vw, 72px); line-height:1.04;}
+  .prod .desc{font-size:clamp(19px, 2.2vw, 24px); color:var(--ink-2); max-width:34ch; margin:14px auto 0; letter-spacing:-.015em;}
+  .prod .price{font-size:17px; margin-top:18px; color:var(--ink);}
+  .prod .cta{display:flex; gap:20px; justify-content:center; align-items:center; margin-top:22px; flex-wrap:wrap;}
+  .rail{margin-top:56px; display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; padding:0 max(22px, calc((100vw - 1040px)/2 + 22px)) 8px; scrollbar-width:none;}
+  .rail::-webkit-scrollbar{display:none;}
+  .rail button{flex:none; width:min(78vw, 420px); padding:0; border:0; background:var(--mist); border-radius:var(--r-xl); overflow:hidden; scroll-snap-align:center; cursor:zoom-in;}
+  .prod:nth-of-type(even) .rail button{background:#fff;}
+  .rail img{width:100%; aspect-ratio:4/5; object-fit:cover;}
+  .rail-nav{display:flex; justify-content:center; gap:10px; margin-top:18px;}
+  .rail-nav button{width:36px; height:36px; border-radius:50%; border:0; background:rgba(0,0,0,.06); cursor:pointer; font-size:18px; color:var(--ink-2);}
+  .rail-nav button:hover{background:rgba(0,0,0,.1);}
+
+  /* ---------- Franja telas / markets ---------- */
+  .band{background:var(--blush); padding:110px 0;}
+  .band .head{text-align:center; margin-bottom:48px;}
+  .band h2{font-size:clamp(40px, 6.4vw, 72px); line-height:1.04;}
+  .band .desc{font-size:clamp(19px, 2.2vw, 24px); color:#5d4a51; max-width:36ch; margin:14px auto 0;}
+  .telas{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:14px;}
+  .tela{border:0; padding:0; background:#fff; border-radius:var(--r-lg); overflow:hidden; cursor:pointer; text-align:left; transition:transform .2s var(--ease), box-shadow .2s;}
+  .tela:hover{transform:translateY(-2px); box-shadow:0 14px 30px -18px rgba(120,20,50,.45);}
+  .tela .sw{aspect-ratio:1; background:var(--mist) center/cover no-repeat;}
+  .tela .nm{padding:10px 12px 12px; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .tela.sel{box-shadow:0 0 0 3px var(--hilo);}
+  .chips{display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; margin:0 0 22px; padding:2px;}
+  .chips::-webkit-scrollbar{display:none;}
+  .chip{flex:none; border:0; cursor:pointer; background:rgba(255,255,255,.7); color:var(--ink); font-size:15px; padding:8px 16px; border-radius:980px; transition:background .15s;}
+  .chip:hover{background:#fff;}
+  .chip.on{background:var(--ink); color:#fff;}
+  .sheet .chips{margin-bottom:14px;}
+  .sheet .chip{background:var(--mist);}
+  .sheet .chip.on{background:var(--ink); color:#fff;}
+  .cat-h{font-size:24px; margin:34px 0 14px;}
+  .cat-h:first-child{margin-top:0;}
+  .empty{padding:32px; border-radius:var(--r-lg); background:rgba(255,255,255,.6); color:var(--ink-2); text-align:center; font-size:15px;}
+
+  .markets{background:var(--ink); color:#f5f5f7; padding:110px 0 120px;}
+  .markets .head{text-align:center; margin-bottom:48px;}
+  .markets h2{font-size:clamp(40px, 6.4vw, 72px); line-height:1.04;}
+  .markets .desc{font-size:clamp(19px, 2.2vw, 24px); color:#a1a1a6; max-width:34ch; margin:14px auto 0;}
+  .mosaic{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+  .mosaic > *{border-radius:var(--r-lg); overflow:hidden; background:#2c2c2e; border:0; padding:0; cursor:zoom-in; aspect-ratio:4/5;}
+  .mosaic img{width:100%; height:100%; object-fit:cover;}
+  .mosaic .ph{display:flex; align-items:center; justify-content:center; color:#6e6e73; font-size:14px; cursor:default;}
+
+  /* ---------- Cómo pedir ---------- */
+  .how{padding:110px 0; text-align:center;}
+  .how h2{font-size:clamp(36px, 5vw, 56px); line-height:1.06;}
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:52px; text-align:left;}
+  .steps li{list-style:none;}
+  .steps .k{font-size:44px; font-weight:700; color:var(--hilo); line-height:1; letter-spacing:-.03em;}
+  .steps h3{font-size:21px; margin:14px 0 6px;}
+  .steps p{color:var(--ink-2); font-size:16px;}
+  .steps ol{display:contents;}
+  .how .note{margin:52px auto 0; max-width:60ch; color:var(--ink-2); font-size:14px;}
+
+  footer{background:var(--mist); padding:36px 0 calc(36px + env(safe-area-inset-bottom)); font-size:13px; color:var(--ink-2);}
+  .foot{display:flex; justify-content:space-between; align-items:center; gap:18px; flex-wrap:wrap;}
+  .foot .logo{height:22px;}
+  .foot a{color:var(--hilo); text-decoration:none;}
+
+  /* ---------- Hojas ---------- */
+  .sheet-bg{position:fixed; inset:0; background:rgba(0,0,0,.36); z-index:80; display:none; align-items:flex-end; justify-content:center; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);}
+  .sheet-bg.open{display:flex;}
+  .sheet{background:#fff; width:100%; max-width:600px; max-height:92vh; max-height:92dvh; overflow:auto; border-radius:22px 22px 0 0; padding:0 0 calc(20px + env(safe-area-inset-bottom)); animation:sube .32s var(--ease); box-shadow:0 -20px 60px -30px rgba(0,0,0,.4);}
+  @keyframes sube{from{transform:translateY(40px); opacity:.5} to{transform:none; opacity:1}}
+  @media (min-width:740px){ .sheet-bg{align-items:center;} .sheet{border-radius:22px; max-height:86vh;} }
+  .sheet-head{position:sticky; top:0; background:rgba(255,255,255,.92); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); display:flex; align-items:center; justify-content:space-between; padding:16px 20px; z-index:2;}
+  .sheet-head h3{font-size:19px; flex:1; text-align:center;}
+  .atras{display:inline-flex; align-items:center; gap:2px; border:0; background:none; cursor:pointer; color:var(--hilo); font:inherit; font-size:16px; padding:6px 6px 6px 0; min-width:84px; flex:none;}
+  .atras svg{width:22px; height:22px;}
+  .atras + h3 + .x{margin-left:calc(84px - 32px);}
+  @media (max-width:420px){ #cartAtras span{display:none;} #cartAtras{min-width:32px;} #cartAtras + h3 + .x{margin-left:0;} }
+  .edit{background:none; border:0; color:var(--hilo); cursor:pointer; font-size:14px; padding:4px;}
+  .x{width:32px; height:32px; border-radius:50%; border:0; background:var(--mist); cursor:pointer; font-size:18px; line-height:1; color:var(--ink-2); flex:none;}
+  .sheet-body{padding:6px 20px 8px; display:flex; flex-direction:column; gap:22px;}
+  .prod-mini{display:flex; gap:14px; align-items:center;}
+  .prod-mini img{width:60px; height:60px; object-fit:cover; border-radius:14px;}
+  .prod-mini .t{font-weight:600; font-size:19px;}
+  .prod-mini .p{color:var(--ink-2); font-size:15px;}
+  .label{display:block; font-size:15px; font-weight:600; margin-bottom:10px;}
+  .opcional{color:var(--ink-2); font-weight:400;}
+  .pick-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(96px,1fr)); gap:10px;}
+  .pick-grid .tela{background:var(--mist);}
+  .pick-grid .tela .nm{font-size:13px; padding:7px 9px 9px;}
+  .chosen{border-radius:var(--r-lg); overflow:hidden; background:var(--mist);}
+  .chosen .big{position:relative; cursor:zoom-in; background:#fff;}
+  .chosen .big img{width:100%; max-height:300px; object-fit:contain;}
+  .chosen .zoomhint{position:absolute; right:10px; bottom:10px; background:rgba(0,0,0,.6); color:#fff; font-size:12px; padding:5px 11px; border-radius:980px;}
+  .chosen .row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px;}
+  input, textarea{width:100%; font:inherit; font-size:17px; color:var(--ink); background:var(--mist); border:1px solid transparent; border-radius:12px; padding:13px 14px; outline:none; transition:border-color .15s, background .15s;}
+  input:focus, textarea:focus{background:#fff; border-color:var(--hilo); box-shadow:0 0 0 4px color-mix(in srgb, var(--hilo) 15%, transparent);}
+  textarea{min-height:84px; resize:vertical;}
+  .num{max-width:140px; font-size:22px; font-weight:600; text-align:center;}
+  .err{color:var(--danger); font-size:14px; margin-top:6px; display:none;}
+  .err.show{display:block;}
+  .seg{display:flex; background:var(--mist); border-radius:12px; padding:3px;}
+  .seg label{flex:1; cursor:pointer; position:relative;}
+  .seg input{position:absolute; opacity:0; width:1px; height:1px;}
+  .seg span{display:block; text-align:center; padding:9px 10px; border-radius:10px; font-size:15px; transition:background .15s;}
+  .seg input:checked + span{background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.12); font-weight:600;}
+  .seg input:focus-visible + span{outline:2px solid var(--hilo);}
+  /* ---------- Configurador del pedido (estilo tienda Apple) ---------- */
+  .q{font-size:24px; line-height:1.15; font-weight:600; letter-spacing:-.02em; margin:0 0 14px;}
+  .q span{color:var(--ink-2);}
+  .paso{display:flex; flex-direction:column;}
+  .opts{display:grid; gap:12px;}
+  .opts.cols2{grid-template-columns:1fr 1fr;}
+  .opt{position:relative; display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; text-align:left; cursor:pointer;
+    background:#fff; border:1px solid #c7c7cc; border-radius:16px; padding:17px 18px; font:inherit; color:var(--ink);
+    transition:border-color .15s, box-shadow .2s, transform .15s var(--ease);}
+  .opt:hover{border-color:#86868b;}
+  .opt:active{transform:scale(.99);}
+  .opt input{position:absolute; opacity:0; width:1px; height:1px;}
+  .opt[aria-checked="true"], .opt:has(input:checked){border-color:var(--hilo); box-shadow:0 0 0 1px var(--hilo), 0 10px 24px -16px rgba(192,38,63,.6);}
+  .opt:has(input:focus-visible){outline:3px solid color-mix(in srgb, var(--hilo) 40%, transparent); outline-offset:2px;}
+  .opt .o-txt{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .opt .o-t{font-size:17px; font-weight:600;}
+  .opt .o-s{font-size:13px; color:var(--ink-2);}
+  .opt img{width:44px; height:44px; object-fit:cover; border-radius:10px; flex:none;}
+  .pick-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(104px,1fr)); gap:12px;}
+  .pick-grid .tela{background:#fff; border:1px solid #c7c7cc; border-radius:16px; box-shadow:none;}
+  .pick-grid .tela .sw{border-radius:15px 15px 0 0;}
+  .pick-grid .tela .nm{font-size:13px; padding:8px 10px 10px;}
+  .pick-grid .tela[aria-checked="true"]{border-color:var(--hilo); box-shadow:0 0 0 1px var(--hilo), 0 10px 24px -16px rgba(192,38,63,.6); transform:none;}
+  .nums-ayuda{margin:16px 0 10px; font-size:15px; color:var(--ink-2);}
+  .nums{display:grid; grid-template-columns:repeat(auto-fill, minmax(52px,1fr)); gap:10px;}
+  .num-b{height:52px; border-radius:50%; aspect-ratio:1; justify-self:center; width:52px; border:1px solid #c7c7cc; background:#fff; cursor:pointer;
+    font:inherit; font-size:17px; font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums; transition:transform .15s var(--ease), border-color .15s, box-shadow .2s, background .15s;}
+  .num-b:hover{border-color:#86868b;}
+  .num-b:active{transform:scale(.94);}
+  .num-b[aria-checked="true"]{background:linear-gradient(180deg,#d4334e,var(--hilo) 60%,#ad1f37); color:#fff; border-color:transparent; box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 8px 18px -8px rgba(192,38,63,.7);}
+  .vnums{display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding:4px 2px; max-width:100%;}
+  .vnums::-webkit-scrollbar{display:none;}
+  .vnums .num-b{flex:none; width:46px; height:46px; background:rgba(255,255,255,.12); color:#fff; border-color:rgba(255,255,255,.3);}
+  .vnums .num-b[aria-checked="true"]{background:linear-gradient(180deg,#d4334e,var(--hilo) 60%,#ad1f37); border-color:transparent;}
+  .numrow{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:14px; background:#fff; border:1px solid #c7c7cc; border-radius:16px; padding:10px 10px 10px 18px;}
+  .numrow label{font-size:17px; font-weight:600;}
+  .numrow .num{width:120px; background:var(--mist);}
+  .sheet-foot{position:sticky; bottom:0; z-index:3; display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:14px 20px calc(14px + env(safe-area-inset-bottom)); margin-bottom:calc(-20px - env(safe-area-inset-bottom));
+    background:rgba(255,255,255,.86); -webkit-backdrop-filter:saturate(180%) blur(18px); backdrop-filter:saturate(180%) blur(18px); border-top:1px solid var(--line);}
+  .sheet-foot .ft{min-width:0;}
+  .sheet-foot .ft-p{font-size:17px; font-weight:600;}
+  .sheet-foot .ft-s{font-size:13px; color:var(--ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .sheet-foot .pill{flex:none;}
+  .cfg{gap:34px; padding-top:10px; padding-bottom:26px;}
+  @media (max-width:420px){ .opts.cols2{grid-template-columns:1fr;} .q{font-size:22px;} }
+
+  .campos{display:flex; flex-direction:column; gap:16px;}
+  .campos .q{margin-bottom:0;}
+  .campos2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:380px){ .campos2{grid-template-columns:1fr;} }
+  .item{display:flex; gap:12px; align-items:center; padding:12px; border-radius:var(--r-md); background:var(--mist);}
+  .item img{width:56px; height:56px; object-fit:cover; border-radius:10px; flex:none; background:#fff;}
+  .item .info{flex:1; min-width:0;}
+  .item .t{font-weight:600;}
+  .item .s{font-size:14px; color:var(--ink-2);}
+  .item .rm{background:none; border:0; color:var(--ink-2); cursor:pointer; font-size:14px; padding:4px;}
+  .item .rm:hover{color:var(--danger);}
+  .total{display:flex; justify-content:space-between; font-size:15px; color:var(--ink-2); padding:0 4px;}
+  .ok{text-align:center; padding:12px 6px 0;}
+  .ok svg{width:56px; height:56px; color:var(--hilo);}
+  .ok h3{font-size:26px; margin:12px 0 8px;}
+  .ok p{color:var(--ink-2);}
+  .resumen{white-space:pre-wrap; text-align:left; font-size:14px; background:var(--mist); border-radius:var(--r-md); padding:14px;}
+  .small{color:var(--ink-2); font-size:14px; text-align:center;}
+
+  /* ---------- Visor ---------- */
+  .viewer{position:fixed; inset:0; background:#000; z-index:120; display:none; flex-direction:column;}
+  .viewer.open{display:flex;}
+  .vtop{display:flex; justify-content:space-between; align-items:center; padding:calc(10px + env(safe-area-inset-top)) 14px 10px; color:#fff; gap:10px;}
+  .vtop .t{font-size:15px; color:#d2d2d7; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .vbtn{width:38px; height:38px; border-radius:50%; border:0; background:rgba(255,255,255,.14); color:#fff; cursor:pointer; font-size:18px; flex:none;}
+  .stage{flex:1; overflow:auto; display:flex; align-items:center; justify-content:center; touch-action:pan-x pan-y;}
+  .stage img{max-width:100%; max-height:100%; object-fit:contain; cursor:zoom-in;}
+  .stage.z{display:block;}
+  .stage.z img{max-width:none; max-height:none; cursor:zoom-out;}
+  .vnav{position:absolute; top:50%; transform:translateY(-50%);}
+  .vprev{left:12px;} .vnext{right:12px;}
+  .vbot{display:flex; align-items:center; justify-content:center; gap:10px; padding:10px 14px calc(14px + env(safe-area-inset-bottom)); color:#fff; flex-wrap:wrap;}
+  .vbot .hint{font-size:13px; color:#a1a1a6; width:100%; text-align:center;}
+  .numbox{display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.12); padding:8px 8px 8px 14px; border-radius:16px;}
+  .numbox label{font-size:15px;}
+  .numbox input{width:110px; background:#fff; padding:9px 10px;}
+
+  .toast{position:fixed; left:50%; bottom:calc(24px + env(safe-area-inset-bottom)); transform:translate(-50%, 10px); background:rgba(29,29,31,.92); color:#fff; padding:11px 20px; border-radius:980px; font-size:15px; z-index:200; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;}
+  .toast.show{opacity:1; transform:translate(-50%,0);}
+
+  @media (max-width:740px){
+    body{font-size:16px;}
+    .hero{height:auto; aspect-ratio:3/4; min-height:0;}
+    .hero > img{object-fit:cover;}
+    .hero .wrap{padding-bottom:40px;}
+    .hero .script{height:44px;}
+    .prod{padding:76px 0 64px;}
+    .rail{margin-top:40px;}
+    .band, .markets, .how{padding:76px 0;}
+    .steps{grid-template-columns:1fr; gap:30px;}
+    .mosaic{grid-template-columns:repeat(2,1fr); gap:8px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap bar">
+    <a href="#inicio" aria-label="Ndeocaki, inicio"><img class="logo" src="img/logo.png" alt="Ndeocaki"></a>
+    <button class="bag" id="cartBtn" type="button" aria-label="Ver mi pedido">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
+      <span>Mi pedido</span><span class="n" id="cartCount" data-zero="1">0</span>
+    </button>
+  </div>
+  <nav class="chooser" aria-label="Productos"><ul id="chooser"></ul></nav>
+</header>
+
+<main id="inicio">
+  <section class="hero" aria-label="Portada">
+    <img src="img/n-portada-1.webp" alt="Puesto de Ndeocaki en un market, con neceseres, monederos y estuches de cuadros sobre la mesa">
+    <div class="wrap">
+      <img class="script" src="img/logo.png" alt="" aria-hidden="true">
+      <h1>Hecho a mano.<br>Pieza a pieza.</h1>
+      <p class="sub">Bolsos, neceseres y capas cosidos uno a uno, en la tela que tú elijas.</p>
+      <div class="cta">
+        <a class="pill" href="#coleccion">Elegir el mío</a>
+        <a class="link" href="#telas">Ver las telas ›</a>
+      </div>
+      <svg class="scroll" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+  </section>
+
+  <div id="coleccion"></div>
+
+  <section class="band" id="telas">
+    <div class="wrap">
+      <div class="head">
+        <h2>Tu tela. Tu número.</h2>
+        <p class="desc">Abre cada imagen para ver las telas en grande. Cuando encuentres la tuya, apunta su número.</p>
+      </div>
+      <div class="chips" id="telaChips" role="group" aria-label="Tipo de tela"></div>
+      <div id="telasGrid"><div class="empty">Cargando telas…</div></div>
+    </div>
+  </section>
+
+  <section class="markets" id="markets">
+    <div class="wrap">
+      <div class="head">
+        <h2>Del taller a los markets.</h2>
+        <p class="desc">Ven a tocar las telas y a llevarte tu pieza en persona.</p>
+      </div>
+      <div class="mosaic" id="mosaic"></div>
+    </div>
+  </section>
+
+  <section class="how" id="como">
+    <div class="wrap">
+      <h2>Así de fácil.</h2>
+      <ol class="steps">
+        <li><div class="k">1</div><h3>Elige tu pieza</h3><p>Desliza las fotos y pulsa «Elegir tela» en la que más te guste.</p></li>
+        <li><div class="k">2</div><h3>Escoge la tela</h3><p>Amplía la imagen, busca tu tela y escribe su número.</p></li>
+        <li><div class="k">3</div><h3>Envía tu pedido</h3><p>Se envía por WhatsApp, ya escrito. No pagas nada hasta que te lo confirmemos.</p></li>
+      </ol>
+      <p class="note">Cada pieza se cose a mano, así que lleva su tiempo de preparación. Las telas cambian según la temporada y la disponibilidad.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <img class="logo" src="img/logo.png" alt="Ndeocaki">
+    <span>Envíos por toda España y entregas en Terrassa.</span>
+    <a href="https://www.instagram.com/ndeocaki/" target="_blank" rel="noopener">@ndeocaki en Instagram</a>
+  </div>
+</footer>
+
+<!-- Hoja: elegir tela -->
+<div class="sheet-bg" id="pickBg" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+    <div class="sheet-head">
+      <button class="atras" type="button" id="pickAtras" aria-label="Volver al paso anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>Atrás</span></button>
+      <h3 id="pickTitle">Configura tu pieza</h3>
+      <button class="x" type="button" data-close="pickBg" aria-label="Cerrar">×</button>
+    </div>
+    <div class="sheet-body cfg">
+      <div class="prod-mini" id="pickProd"></div>
+
+      <section class="paso" id="secOpcion" hidden>
+        <h4 class="q" id="qOpcion"></h4>
+        <div class="opts cols2" id="pickOpciones" role="radiogroup" aria-labelledby="qOpcion"></div>
+      </section>
+
+      <section class="paso" id="secCats">
+        <h4 class="q" id="qCats">Tipo de tela. <span>¿Cuál te gusta más?</span></h4>
+        <div class="opts cols2" id="pickCats" role="radiogroup" aria-labelledby="qCats"></div>
+      </section>
+
+      <section class="paso" id="secTelas">
+        <h4 class="q" id="qTelas">Tela. <span>Elige tu favorita.</span></h4>
+        <div id="pickTelas"></div>
+      </section>
+
+      <section class="paso" id="pickStep2" hidden>
+        <h4 class="q">Número. <span>Búscalo en la foto.</span></h4>
+        <div class="chosen">
+          <div class="big" id="chosenBig" role="button" tabindex="0" aria-label="Ver la tela en grande">
+            <img id="chosenImg" alt="">
+            <span class="zoomhint">Ampliar</span>
+          </div>
+          <div class="row">
+            <strong id="chosenName"></strong>
+            <button class="link" type="button" id="verGrande">Ver en grande</button>
+          </div>
+        </div>
+        <p class="nums-ayuda" id="numsAyuda">Toca el número de tu tela.</p>
+        <div class="nums" id="numChips" role="radiogroup" aria-label="Número de tela"></div>
+        <input type="hidden" id="numTela">
+        <div class="err" id="numErr">Elige el número de tu tela.</div>
+      </section>
+
+      <section class="paso">
+        <h4 class="q">Detalles. <span>Si quieres comentarnos algo.</span></h4>
+        <textarea id="detalles" aria-label="Detalles"></textarea>
+      </section>
+    </div>
+    <div class="sheet-foot">
+      <div class="ft"><div class="ft-p" id="ftPrecio"></div><div class="ft-s" id="ftResumen"></div></div>
+      <button class="pill" type="button" id="addBtn">Añadir al pedido</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hoja: mi pedido -->
+<div class="sheet-bg" id="cartBg" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+    <div class="sheet-head">
+      <button class="atras" type="button" id="cartAtras" aria-label="Seguir eligiendo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>Seguir eligiendo</span></button>
+      <h3 id="cartTitle">Mi pedido</h3>
+      <button class="x" type="button" data-close="cartBg" aria-label="Cerrar">×</button>
+    </div>
+    <div class="sheet-body" id="cartBody"></div>
+  </div>
+</div>
+
+<!-- Visor -->
+<div class="viewer" id="viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Foto ampliada">
+  <div class="vtop">
+    <span class="t" id="vTitle"></span>
+    <button class="vbtn" type="button" id="vClose" aria-label="Cerrar">×</button>
+  </div>
+  <div class="stage" id="vStage"><img id="vImg" alt=""></div>
+  <button class="vbtn vnav vprev" type="button" id="vPrev" aria-label="Anterior">‹</button>
+  <button class="vbtn vnav vnext" type="button" id="vNext" aria-label="Siguiente">›</button>
+  <div class="vbot" id="vBot"><span class="hint">Toca la foto para ampliarla y desliza para moverte</span></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== Configuración ===== */
+const WHATSAPP = "34622156393";
+// Supabase: aquí se guardan los pedidos para que lleguen solos a la app de Ndeocaki
+const SUPABASE_URL  = "PEGAR_PROJECT_URL";
+const SUPABASE_KEY  = "PEGAR_CLAVE_PUBLICA";   // número que recibe los pedidos (con prefijo 34, sin + ni espacios)
+/* Telas: pon las imágenes en telas/ y añádelas aquí, en el orden en que quieres que salgan */
+const TELAS_WEB = [
+  {cat:"Vichy", nombre:"Vichy 1", imagen:"telas/vichy-1.webp", nums:"1-15,17-19"},
+  {cat:"Vichy", nombre:"Vichy 2", imagen:"telas/vichy-2.webp", nums:"1-21"},
+  {cat:"Vichy", nombre:"Vichy 3", imagen:"telas/vichy-3.webp", nums:"20-33"},
+  {cat:"Vichy", nombre:"Vichy 4", imagen:"telas/vichy-4.webp", nums:"80-85"},
+  {cat:"Vichy", nombre:"Vichy 5", imagen:"telas/vichy-5.webp", nums:"2,4-8"},
+  {cat:"Vichy", nombre:"Vichy 6", imagen:"telas/vichy-6.webp", nums:"51-72"},
+  {cat:"Vichy", nombre:"Vichy 7", imagen:"telas/vichy-7.webp", nums:"1-17"},
+  {cat:"Vichy", nombre:"Vichy 8", imagen:"telas/vichy-8.webp", nums:"1-16"},
+  {cat:"Rayas", nombre:"Rayas 1", imagen:"telas/rayas-1.webp", nums:"2-5"},
+  {cat:"Rayas", nombre:"Rayas 2", imagen:"telas/rayas-2.webp", nums:"1-3"},
+  {cat:"Rayas", nombre:"Rayas 3", imagen:"telas/rayas-3.webp", nums:"1-3"},
+  {cat:"Rayas", nombre:"Rayas 4", imagen:"telas/rayas-4.webp", nums:"1-2"},
+  {cat:"Rayas", nombre:"Rayas 5", imagen:"telas/rayas-5.webp", nums:"1-6"},
+  {cat:"Rayas", nombre:"Rayas 6", imagen:"telas/rayas-6.webp", nums:"1-6"},
+  {cat:"Rayas", nombre:"Rayas 7", imagen:"telas/rayas-7.webp", nums:"1-20"},
+  {cat:"Lisos", nombre:"Lisos 1", imagen:"telas/lisos-1.webp", nums:"24-55"},
+  {cat:"Lisos", nombre:"Lisos 2", imagen:"telas/lisos-2.webp", nums:"1-23"},
+  {cat:"Lisos", nombre:"Lisos 3", imagen:"telas/lisos-3.webp", nums:"4-5,56-77"},
+  {cat:"Acolchadas", nombre:"Acolchadas 1", imagen:"telas/acolchadas-1.webp", nums:"1-4"},
+  {cat:"Acolchadas", nombre:"Acolchadas 2", imagen:"telas/acolchadas-2.webp", nums:"1-4"},
+  {cat:"Acolchadas", nombre:"Acolchadas 3", imagen:"telas/acolchadas-3.webp", nums:"1-2"},
+  {cat:"Pana", nombre:"Pana", imagen:"telas/pana-1.webp", nums:"1-18"},
+  {cat:"Texturas", nombre:"Texturas", imagen:"telas/texturas-1.webp", nums:"41-48"},
+];
+
+/* ===== Productos ===== */
+const ig=(c,n)=>Array.from({length:n},(_,i)=>`img/ig-${c}-${i}.webp`);
+const old=(c,n)=>Array.from({length:n},(_,i)=>`img/${c}-${i}.jpg`);
+const nv=(c,n)=>Array.from({length:n},(_,i)=>`img/n-${c}-${i}.webp`);
+const PRODUCTOS = [
+  {id:"scrunchie", nombre:"Bolso scrunchie", corto:"Scrunchie", precio:35, tag:"El más pedido", desc:"Asas fruncidas y lazada ajustable para llevarlo al hombro o cruzado.", imgs:["img/ig-scrunchie-6.webp","img/ig-scrunchie-7.webp","img/n-scrunchie-0.webp","img/ig-scrunchie-0.webp","img/n-scrunchie-1.webp","img/ig-scrunchie-4.webp","img/n-scrunchie-2.webp","img/ig-scrunchie-1.webp","img/ig-scrunchie-5.webp","img/n-scrunchie-3.webp","img/ig-scrunchie-2.webp"], pista:"Cualquier detalle que quieras comentar."},
+  {id:"neceser-plano", nombre:"Neceser plano", corto:"Plano", precio:15, tag:"Nuevo", desc:"Multiusos y personalizado al detalle: liso, de cuadros, a rayas, con frase o sin ella.", imgs:[...ig("plano",5), ...nv("plano",2)], pista:"¿Con frase? Escríbela aquí."},
+  {id:"neceseres", nombre:"Neceser", corto:"Neceser", precio:20, tag:"", desc:"El de siempre, cosido a mano. Con asa o sin asa.", imgs:[...nv("neceser",6), ...ig("neceser",2)], pista:"Cualquier detalle que quieras comentar.", opciones:{titulo:"Asa", pregunta:"¿Con o sin?", valores:[{t:"Con asa", s:"Para colgarlo o llevarlo en la mano"},{t:"Sin asa", s:"Más limpio y compacto"}]}},
+  {id:"neceseres-xxl", nombre:"Neceser XXL", corto:"XXL", precio:25, tag:"", desc:"Cabe hasta el secador. Espacio de sobra para llevarlo todo.", imgs:["img/xxl-nerea-0.webp", ...nv("xxl",2), ...ig("xxl",4)], pista:"Cualquier detalle que quieras comentar.", opciones:{titulo:"Asa", pregunta:"¿Con o sin?", valores:[{t:"Con asa", s:"Para colgarlo o llevarlo en la mano"},{t:"Sin asa", s:"Más limpio y compacto"}]}},
+  {id:"bolsos-viaje", nombre:"Bolso de viaje", corto:"Viaje", precio:50, tag:"", desc:"Gran capacidad y bolsillo interior. En rizo de toalla o en cuadros vichy.", imgs:[...nv("viaje",6), "img/ig-tote-0.webp", "img/ig-tote-2.webp", "img/viaje-nerea-0.webp", ...ig("viaje",4)], pista:"Cualquier detalle que quieras comentar."},
+  {id:"tote-bags", nombre:"Tote bag", corto:"Tote", precio:35, tag:"", desc:"Para el día a día, con todo lo que necesitas dentro.", imgs:[...nv("tote",2), "img/ig-tote-1.webp", ...old("tote-bags",2)], pista:"Cualquier detalle que quieras comentar."},
+  {id:"estuche", nombre:"Estuche", corto:"Estuche", precio:15, tag:"", desc:"Alargado, con cremallera, para lápices, maquillaje o lo que quieras.", imgs:nv("estuche",2), pista:"Cualquier detalle que quieras comentar."},
+  {id:"fundas-portatil", nombre:"Funda de portátil", corto:"Portátil", precio:30, tag:"", desc:"A la medida de tu portátil, con volante o lisa.", imgs:[...nv("portatil",3), ...old("fundas-portatil",2)], pista:"Pulgadas o medidas de tu portátil."},
+  {id:"fundas-kindle", nombre:"Funda de Kindle", corto:"Kindle", precio:15, tag:"", desc:"Acolchada y con volante, para proteger tu e-reader.", imgs:[...nv("kindle",2), ...old("fundas-kindle",2)], pista:"Modelo de tu e-reader o medidas."},
+  {id:"capas", nombre:"Capa de cumpleaños", corto:"Capas", precio:40, tag:"Bajo pedido", desc:"Estilo Waldorf, con el nombre bordado a mano y parches para cada año.", imgs:[...ig("capas",3), ...old("capas",6)], pista:"Nombre a bordar y edad del peque."},
+];
+const MARKETS = [...nv("market",4), "img/ig-market-0.webp"];
+const foto = (p,i) => p.imgs[i];
+
+/* ===== Utilidades ===== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const euros = n => n==null ? "" : `${n} €`;
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2200); }
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+
+/* ===== Hojas ===== */
+let abiertas = 0;
+function abrir(id){ const el=document.getElementById(id); el.classList.add("open"); el.setAttribute("aria-hidden","false"); abiertas++; document.body.classList.add("locked"); }
+function cerrar(id){ const el=document.getElementById(id); if(!el.classList.contains("open")) return; el.classList.remove("open"); el.setAttribute("aria-hidden","true"); abiertas=Math.max(0,abiertas-1); if(!abiertas) document.body.classList.remove("locked"); }
+document.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", () => cerrar(b.dataset.close)));
+document.querySelectorAll(".sheet-bg").forEach(bg => bg.addEventListener("click", e => { if(e.target===bg) cerrar(bg.id); }));
+document.addEventListener("keydown", e => {
+  if(e.key!=="Escape") return;
+  if($("#viewer").classList.contains("open")) return cerrarVisor();
+  ["cartBg","pickBg"].forEach(cerrar);
+});
+
+/* ===== Selector y secciones de producto ===== */
+function pintarProductos(){
+  $("#chooser").innerHTML = PRODUCTOS.map(p => `
+    <li><a href="#p-${p.id}" data-go="${p.id}"><img src="${foto(p,0)}" alt=""><span>${esc(p.corto)}</span></a></li>`).join("");
+
+  $("#coleccion").innerHTML = PRODUCTOS.map(p => `
+    <section class="prod" id="p-${p.id}" aria-labelledby="t-${p.id}">
+      <div class="wrap">
+        <p class="tag">${esc(p.tag)}</p>
+        <h2 id="t-${p.id}">${esc(p.nombre)}</h2>
+        <p class="desc">${esc(p.desc)}</p>
+        ${p.precio!=null?`<p class="price">${euros(p.precio)}</p>`:""}
+        <div class="cta">
+          <button class="pill" type="button" data-elegir="${p.id}">Elegir tela</button>
+          <a class="link" href="#como">Cómo pedir ›</a>
+        </div>
+      </div>
+      <div class="rail" id="r-${p.id}">
+        ${Array.from({length:p.imgs.length},(_,i)=>`<button type="button" data-ver="${p.id}" data-i="${i}" aria-label="Ver foto ${i+1} de ${esc(p.nombre)}"><img src="${foto(p,i)}" alt="${esc(p.nombre)}, foto ${i+1}" loading="lazy"></button>`).join("")}
+      </div>
+      ${p.imgs.length>2 ? `<div class="rail-nav"><button type="button" data-rail="r-${p.id}" data-dir="-1" aria-label="Fotos anteriores">‹</button><button type="button" data-rail="r-${p.id}" data-dir="1" aria-label="Más fotos">›</button></div>` : ""}
+    </section>`).join("");
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-elegir]"); if(el) return abrirElegir(el.dataset.elegir);
+  const v = e.target.closest("[data-ver]");
+  if(v){ const p=PRODUCTOS.find(x=>x.id===v.dataset.ver); return abrirVisor(Array.from({length:p.imgs.length},(_,i)=>({src:foto(p,i), titulo:p.nombre})), +v.dataset.i); }
+  const r = e.target.closest("[data-rail]");
+  if(r){ const rail=document.getElementById(r.dataset.rail); const w=rail.querySelector("button").offsetWidth+16; rail.scrollBy({left:w*(+r.dataset.dir), behavior:"smooth"}); }
+});
+// Marca en el selector el producto que se está viendo
+function vigilarSecciones(){
+  const links = new Map([...document.querySelectorAll("[data-go]")].map(a=>[a.dataset.go, a]));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if(!en.isIntersecting) return;
+      const id = en.target.classList.contains("prod") ? en.target.id.replace("p-","") : null;
+      links.forEach((a,k) => a.classList.toggle("on", k===id));
+      const a = links.get(id); if(a){ const ul=$("#chooser"); const li=a.parentElement; ul.scrollTo({left: li.offsetLeft - ul.clientWidth/2 + li.offsetWidth/2, behavior:"smooth"}); }
+    });
+  }, {rootMargin:"-45% 0px -50% 0px"});
+  document.querySelectorAll(".prod, .hero, .band, .markets, .how").forEach(s => io.observe(s));
+}
+
+/* ===== Markets ===== */
+function pintarMarkets(){
+  const m = $("#mosaic");
+  if(MARKETS.length){
+    m.innerHTML = MARKETS.map((src,i)=>`<button type="button" data-mk="${i}" aria-label="Ver foto del market ${i+1}"><img src="${esc(src)}" alt="Market de Ndeocaki" loading="lazy"></button>`).join("");
+    m.addEventListener("click", e => { const b=e.target.closest("[data-mk]"); if(b) abrirVisor(MARKETS.map(s=>({src:s, titulo:"Markets"})), +b.dataset.mk); });
+  } else {
+    m.innerHTML = Array.from({length:6},()=>`<div class="ph">Foto del market</div>`).join("");
+  }
+}
+
+/* ===== Telas ===== */
+// "1-15,17-19" -> [1,2,...,15,17,18,19]
+function numeros(txt){
+  if(!txt) return [];
+  const out=[];
+  String(txt).split(",").forEach(p=>{ const [a,b]=p.split("-").map(x=>parseInt(x,10)); if(isNaN(a)) return; for(let n=a;n<=(isNaN(b)?a:b);n++) out.push(String(n)); });
+  return [...new Set(out)];
+}
+let TELAS = [];
+function cargarTelas(){
+  const cont = $("#telasGrid");
+  if(TELAS_WEB.length){
+    TELAS = TELAS_WEB.map((t,i)=>({id:String(i+1), cat:t.cat, nombre:t.nombre, imagen_url:t.imagen, nums:numeros(t.nums)}));
+  } else {
+    // Vista previa: telas de ejemplo hasta que se añadan las de verdad
+    const colores=[["Vichy rosa","#e9b8c4"],["Vichy verde","#a9c3a6"],["Rayas azul","#9fb6d6"],["Lino natural","#d9cbb2"],["Pana mostaza","#d8b45a"],["Borreguito","#efe9df"]];
+    TELAS = colores.map((c,i)=>({id:"demo"+i, nombre:c[0], imagen_url:muestra(c[1],i)}));
+  }
+  pintarTelas();
+}
+const CATS = () => [...new Set(TELAS.map(t=>t.cat).filter(Boolean))];
+let catSeccion = "Todas", catPicker = "Todas";
+function chipsHTML(actual){
+  const cs = CATS(); if(cs.length<2) return "";
+  return ["Todas", ...cs].map(c=>`<button type="button" class="chip${c===actual?" on":""}" data-cat="${esc(c)}" aria-pressed="${c===actual}">${esc(c)}</button>`).join("");
+}
+function gridTelas(cat, agrupar){
+  const idx = TELAS.map((t,i)=>i).filter(i=>cat==="Todas"||TELAS[i].cat===cat);
+  if(!idx.length) return `<div class="empty">Muy pronto verás aquí todas las telas.</div>`;
+  if(agrupar && cat==="Todas" && CATS().length>1){
+    return CATS().map(c=>`<h3 class="cat-h">${esc(c)}</h3><div class="telas">${idx.filter(i=>TELAS[i].cat===c).map(i=>telaHTML(TELAS[i],i)).join("")}</div>`).join("");
+  }
+  return `<div class="telas">${idx.map(i=>telaHTML(TELAS[i],i)).join("")}</div>`;
+}
+function pintarTelas(){
+  $("#telaChips").innerHTML = chipsHTML(catSeccion);
+  $("#telasGrid").innerHTML = gridTelas(catSeccion, true);
+}
+$("#telaChips").addEventListener("click", e=>{ const b=e.target.closest("[data-cat]"); if(!b) return; catSeccion=b.dataset.cat; pintarTelas(); });
+function telaHTML(t,i){
+  return `<button class="tela" type="button" data-tela="${i}" aria-label="Ver ${esc(t.nombre)}"><div class="sw" style="background-image:url('${esc(t.imagen_url)}')"></div><div class="nm">${esc(t.nombre)}</div></button>`;
+}
+function muestra(color,i){
+  const n=i*6+1;
+  const cuadros=Array.from({length:6},(_,k)=>{const x=20+(k%3)*120, y=30+Math.floor(k/3)*135; return `<rect x="${x}" y="${y}" width="100" height="100" rx="12" fill="${color}"/><text x="${x+50}" y="${y+124}" font-family="-apple-system,Helvetica" font-size="18" text-anchor="middle" fill="#333">${n+k}</text>`}).join("");
+  return "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 320"><rect width="380" height="320" fill="#fff"/>${cuadros}</svg>`);
+}
+$("#telasGrid").addEventListener("click", e => {
+  const b=e.target.closest("[data-tela]"); if(!b) return;
+  abrirVisor(TELAS.map(t=>({src:t.imagen_url, titulo:t.nombre})), +b.dataset.tela);
+});
+
+/* ===== Configurar pieza ===== */
+let eleccion = null;
+function abrirElegir(prodId, editIdx){
+  const p = PRODUCTOS.find(x=>x.id===prodId);
+  eleccion = {prod:p, telaIdx:null, cat:CATS()[0]||"Todas", opcion:p.opciones?p.opciones.valores[0].t:null, editIdx:(editIdx==null?null:editIdx)};
+  const previo = editIdx!=null ? cesta[editIdx] : null;
+  $("#pickProd").innerHTML = `<img src="${foto(p,0)}" alt=""><div><div class="t">${esc(p.nombre)}</div><div class="p">${p.precio!=null?euros(p.precio):"Precio a consultar"}</div></div>`;
+  $("#detalles").value=""; $("#detalles").placeholder=p.pista||"";
+  $("#numTela").value=""; $("#numErr").classList.remove("show");
+  $("#pickStep2").hidden = true;
+  if(previo){
+    if(previo.opcion) eleccion.opcion = previo.opcion;
+    $("#detalles").value = previo.nota || "";
+    const ti = TELAS.findIndex(t=>String(t.id)===String(previo.tela_id));
+    if(ti>=0){ eleccion.telaIdx=ti; eleccion.cat=TELAS[ti].cat||eleccion.cat; }
+  }
+  pintarOpciones(); pintarCats(); pintarPicker();
+  if(eleccion.telaIdx!=null){ mostrarNumero(); if(previo) elegirNumero(previo.numero); }
+  $("#addBtn").textContent = previo ? "Guardar cambios" : "Añadir al pedido";
+  $("#pickTitle").textContent = previo ? "Cambia tu pieza" : "Configura tu pieza";
+  resumenPie();
+  if(!$("#pickBg").classList.contains("open")) abrir("pickBg");
+  $("#pickBg .sheet").scrollTop = 0;
+}
+function pintarOpciones(){
+  const o = eleccion.prod.opciones;
+  $("#secOpcion").hidden = !o;
+  if(!o) return;
+  $("#qOpcion").innerHTML = `${esc(o.titulo)}. <span>${esc(o.pregunta)}</span>`;
+  $("#pickOpciones").innerHTML = o.valores.map(v=>`<button type="button" class="opt" role="radio" aria-checked="${v.t===eleccion.opcion}" data-op="${esc(v.t)}"><span class="o-txt"><span class="o-t">${esc(v.t)}</span>${v.s?`<span class="o-s">${esc(v.s)}</span>`:""}</span></button>`).join("");
+}
+$("#pickOpciones").addEventListener("click", e=>{ const b=e.target.closest("[data-op]"); if(!b) return; eleccion.opcion=b.dataset.op; pintarOpciones(); resumenPie(); });
+function pintarCats(){
+  const cs = CATS();
+  $("#secCats").hidden = cs.length<2;
+  $("#pickCats").innerHTML = cs.map(c=>{
+    const ts = TELAS.filter(t=>t.cat===c);
+    return `<button type="button" class="opt" role="radio" aria-checked="${c===eleccion.cat}" data-cat="${esc(c)}"><span class="o-txt"><span class="o-t">${esc(c)}</span><span class="o-s">${ts.length} ${ts.length===1?"carta":"cartas"} de telas</span></span><img src="${esc(ts[0].imagen_url)}" alt=""></button>`;
+  }).join("");
+}
+$("#pickCats").addEventListener("click", e=>{ const b=e.target.closest("[data-cat]"); if(!b) return; eleccion.cat=b.dataset.cat; pintarCats(); pintarPicker(); $("#secTelas").scrollIntoView({behavior:"smooth", block:"start"}); });
+function pintarPicker(){
+  if(!TELAS.length){ $("#pickTelas").innerHTML = `<div class="empty">Ahora mismo no hay telas publicadas. Envíalo igualmente y lo hablamos por WhatsApp.</div>`; return; }
+  const idx = TELAS.map((t,i)=>i).filter(i=>CATS().length<2 || TELAS[i].cat===eleccion.cat);
+  $("#pickTelas").innerHTML = `<div class="pick-grid" role="radiogroup" aria-labelledby="qTelas">${idx.map(i=>{
+    const t=TELAS[i];
+    return `<button class="tela" type="button" role="radio" aria-checked="${i===eleccion.telaIdx}" data-tela="${i}"><div class="sw" style="background-image:url('${esc(t.imagen_url)}')"></div><div class="nm">${esc(t.nombre)}</div></button>`;
+  }).join("")}</div>`;
+}
+$("#pickTelas").addEventListener("click", e => {
+  const b=e.target.closest("[data-tela]"); if(!b) return;
+  eleccion.telaIdx = +b.dataset.tela;
+  pintarPicker();
+  mostrarNumero();
+  resumenPie();
+  requestAnimationFrame(()=>$("#pickStep2").scrollIntoView({behavior:"smooth", block:"start"}));
+});
+function mostrarNumero(){
+  const t = TELAS[eleccion.telaIdx];
+  $("#chosenImg").src=t.imagen_url; $("#chosenImg").alt=t.nombre; $("#chosenName").textContent=t.nombre;
+  $("#numTela").value=""; $("#numErr").classList.remove("show");
+  pintarNumeros();
+  $("#pickStep2").hidden=false;
+}
+// Atrás: deshace el último paso; si no hay nada que deshacer, vuelve a donde estaba
+$("#pickAtras").addEventListener("click", ()=>{
+  const sheet=$("#pickBg .sheet");
+  if($("#numTela").value){ elegirNumero(""); $("#pickStep2").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+  if(eleccion.telaIdx!=null){ eleccion.telaIdx=null; $("#pickStep2").hidden=true; pintarPicker(); resumenPie(); $("#secTelas").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+  if(sheet.scrollTop>40){ sheet.scrollTo({top:0, behavior:"smooth"}); return; }
+  cerrar("pickBg");
+  if(eleccion.editIdx!=null) abrirCesta();
+});
+$("#cartAtras").addEventListener("click", ()=>{ cerrar("cartBg"); $("#coleccion").scrollIntoView({behavior:"smooth"}); });
+function verElegida(){ const t=TELAS[eleccion.telaIdx]; abrirVisor([{src:t.imagen_url, titulo:t.nombre}],0,true); }
+$("#chosenBig").addEventListener("click", verElegida);
+$("#verGrande").addEventListener("click", verElegida);
+$("#chosenBig").addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" "){ e.preventDefault(); verElegida(); } });
+function chipsNum(cls){
+  const t=TELAS[eleccion.telaIdx], v=$("#numTela").value;
+  return t.nums.map(n=>`<button type="button" class="num-b ${cls||""}" role="radio" aria-checked="${n===v}" data-num="${n}" aria-label="Tela número ${n}">${n}</button>`).join("");
+}
+function elegirNumero(n){
+  $("#numTela").value=n; $("#numErr").classList.remove("show");
+  document.querySelectorAll("[data-num]").forEach(b=>b.setAttribute("aria-checked", String(b.dataset.num===n)));
+  resumenPie();
+}
+function pintarNumeros(){
+  const t=TELAS[eleccion.telaIdx];
+  if(!t.nums.length){ // carta sin números conocidos: se escribe a mano
+    $("#numsAyuda").textContent="Escribe el número que ves en la foto.";
+    $("#numChips").innerHTML=`<input class="num" id="numLibre" inputmode="numeric" autocomplete="off" placeholder="12" style="grid-column:1/-1;max-width:140px">`;
+    $("#numLibre").addEventListener("input", e=>elegirNumero(e.target.value.trim()));
+    return;
+  }
+  $("#numsAyuda").textContent = `Esta carta tiene ${t.nums.length} telas. Toca el número de la tuya.`;
+  $("#numChips").innerHTML = chipsNum();
+}
+document.addEventListener("click", e=>{ const b=e.target.closest("[data-num]"); if(b) elegirNumero(b.dataset.num); });
+function resumenPie(){
+  const p=eleccion.prod, t=eleccion.telaIdx!=null?TELAS[eleccion.telaIdx]:null, n=$("#numTela").value.trim();
+  $("#ftPrecio").textContent = p.precio!=null ? euros(p.precio) : "Precio a consultar";
+  const partes=[p.nombre]; if(eleccion.opcion) partes.push(eleccion.opcion.toLowerCase());
+  if(t) partes.push(t.nombre + (n?` nº ${n}`:""));
+  $("#ftResumen").textContent = partes.join(" · ");
+}
+$("#addBtn").addEventListener("click", () => {
+  const p=eleccion.prod; let tela=null, numero="";
+  if(TELAS.length){
+    if(eleccion.telaIdx===null){ toast("Elige primero una tela"); $("#secTelas").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+    tela=TELAS[eleccion.telaIdx]; numero=$("#numTela").value.trim();
+    if(!numero || (tela.nums.length && !tela.nums.includes(numero))){ $("#numErr").classList.add("show"); $("#pickStep2").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+  }
+  const nota=$("#detalles").value.trim();
+  const det=[eleccion.opcion, nota].filter(Boolean).join(". ");
+  const item={producto:p.nombre, producto_id:p.id, precio:p.precio,
+    tela_id: tela?String(tela.id):null, tela_nombre: tela?tela.nombre:null, tela_img: tela?tela.imagen_url:null,
+    numero, opcion:eleccion.opcion, nota, detalles:det};
+  const editando = eleccion.editIdx!=null;
+  if(editando) cesta[eleccion.editIdx]=item; else cesta.push(item);
+  guardarCesta(); cerrar("pickBg"); toast(editando?"Cambios guardados":"Añadido a tu pedido"); abrirCesta();
+});
+// Al cerrar el visor desde «Listo», refrescar el resumen con el número escrito
+document.addEventListener("click", e=>{ if(e.target.closest(".vok") && eleccion) resumenPie(); });
+
+/* ===== Visor ===== */
+let vLista=[], vIdx=0;
+function abrirVisor(lista, i, conNumero){
+  vLista=lista; vIdx=i||0;
+  const bot=$("#vBot"); bot.querySelectorAll(".numbox,.vok").forEach(x=>x.remove());
+  if(conNumero){
+    const t=TELAS[eleccion.telaIdx];
+    const box=document.createElement("div"); box.className="vnums numbox"; box.setAttribute("role","radiogroup"); box.setAttribute("aria-label","Número de tela");
+    box.innerHTML = t.nums.length ? chipsNum() : "";
+    const ok=document.createElement("button"); ok.type="button"; ok.className="pill vok"; ok.textContent="Listo";
+    if(t.nums.length) bot.append(box);
+    bot.append(ok);
+    ok.addEventListener("click", cerrarVisor);
+  }
+  pintarVisor();
+  const v=$("#viewer"); v.classList.add("open"); v.setAttribute("aria-hidden","false"); document.body.classList.add("locked");
+  $("#vClose").focus({preventScroll:true});
+}
+function pintarVisor(){
+  const it=vLista[vIdx], st=$("#vStage");
+  st.classList.remove("z"); $("#vImg").style.width="";
+  $("#vImg").src=it.src; $("#vImg").alt=it.titulo;
+  $("#vTitle").textContent = it.titulo + (vLista.length>1 ? `   ${vIdx+1} de ${vLista.length}` : "");
+  $("#vPrev").hidden = $("#vNext").hidden = vLista.length<2;
+}
+function cerrarVisor(){ const v=$("#viewer"); v.classList.remove("open"); v.setAttribute("aria-hidden","true"); if(!abiertas) document.body.classList.remove("locked"); }
+$("#vClose").addEventListener("click", cerrarVisor);
+$("#vPrev").addEventListener("click", ()=>{ vIdx=(vIdx-1+vLista.length)%vLista.length; pintarVisor(); });
+$("#vNext").addEventListener("click", ()=>{ vIdx=(vIdx+1)%vLista.length; pintarVisor(); });
+$("#vImg").addEventListener("click", e => {
+  const st=$("#vStage"), img=$("#vImg");
+  if(st.classList.contains("z")){ st.classList.remove("z"); img.style.width=""; return; }
+  const r=img.getBoundingClientRect(), fx=(e.clientX-r.left)/r.width, fy=(e.clientY-r.top)/r.height;
+  st.classList.add("z"); img.style.width=Math.max(r.width*2.6, st.clientWidth*1.6)+"px";
+  requestAnimationFrame(()=>{ st.scrollLeft=fx*img.offsetWidth-st.clientWidth/2; st.scrollTop=fy*img.offsetHeight-st.clientHeight/2; });
+});
+
+/* ===== Mi pedido ===== */
+let cesta = store.get("ndeocaki_cesta", []);
+let cliente = store.get("ndeocaki_cliente", {});
+function guardarCesta(){ store.set("ndeocaki_cesta", cesta); const n=$("#cartCount"); n.textContent=cesta.length; n.dataset.zero = cesta.length?"0":"1"; }
+$("#cartBtn").addEventListener("click", abrirCesta);
+function abrirCesta(){ pintarCesta(); if(!$("#cartBg").classList.contains("open")) abrir("cartBg"); }
+function pintarCesta(){
+  const body=$("#cartBody");
+  if(!cesta.length){
+    body.innerHTML=`<div class="empty" style="background:var(--mist)">Aún no has elegido nada. Pulsa «Elegir tela» en la pieza que te guste.</div>
+      <button class="pill soft block" type="button" id="verProd">Ver la colección</button>`;
+    $("#verProd").addEventListener("click", ()=>{ cerrar("cartBg"); $("#coleccion").scrollIntoView({behavior:"smooth"}); });
+    return;
+  }
+  const total=cesta.reduce((a,i)=>a+(+i.precio||0),0); const conConsulta=cesta.some(i=>i.precio==null);
+  body.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${cesta.map((it,k)=>`
+        <div class="item">
+          <img src="${esc(it.tela_img || (PRODUCTOS.find(p=>p.id===it.producto_id)||{imgs:[""]}).imgs[0])}" alt="">
+          <div class="info">
+            <div class="t">${esc(it.producto)}</div>
+            ${it.tela_nombre?`<div class="s">${esc(it.tela_nombre)}, tela nº ${esc(it.numero)}</div>`:""}
+            ${it.detalles?`<div class="s">${esc(it.detalles)}</div>`:""}
+          </div>
+          <div style="text-align:right"><div>${euros(it.precio)}</div><button class="edit" type="button" data-edit="${k}" aria-label="Cambiar ${esc(it.producto)}">Cambiar</button><button class="rm" type="button" data-rm="${k}" aria-label="Quitar ${esc(it.producto)}">Quitar</button></div>
+        </div>`).join("")}
+      <div class="total"><span>Total orientativo</span><span>${euros(total)}${conConsulta?" + lo que te confirmemos":""}</span></div>
+      <button class="pill soft" type="button" id="seguir">Añadir otra pieza</button>
+    </div>
+    <form id="form" novalidate style="display:flex;flex-direction:column;gap:26px">
+      <div>
+        <h4 class="q">Tus datos. <span>Para preparar tu pedido.</span></h4>
+        <div class="campos2">
+          <div>
+            <label class="label" for="fNombre">Nombre</label>
+            <input id="fNombre" autocomplete="given-name" required value="${esc(cliente.nombre||"")}">
+            <div class="err" id="eNombre">Escribe tu nombre.</div>
+          </div>
+          <div>
+            <label class="label" for="fApellidos">Apellidos</label>
+            <input id="fApellidos" autocomplete="family-name" required value="${esc(cliente.apellidos||"")}">
+            <div class="err" id="eApellidos">Escribe tus apellidos.</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label class="label" for="fTel">Teléfono</label>
+        <input id="fTel" type="tel" autocomplete="tel" inputmode="tel" required placeholder="600 123 456" value="${esc(cliente.telefono||"")}">
+        <div class="err" id="eTel">Escribe un teléfono válido (9 cifras).</div>
+      </div>
+      <div>
+        <label class="label" for="fIg">Tu Instagram <span class="opcional">(opcional)</span></label>
+        <input id="fIg" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="@tuusuario" value="${esc(cliente.instagram||"")}">
+      </div>
+      <div>
+        <h4 class="q" id="lEntrega">Entrega. <span>¿Cómo lo quieres recibir?</span></h4>
+        <div class="opts cols2" role="radiogroup" aria-labelledby="lEntrega">
+          <label class="opt"><input type="radio" name="entrega" value="Envío" ${cliente.entrega!=="Recogida en Terrassa"?"checked":""}><span class="o-txt"><span class="o-t">Envío</span><span class="o-s">A tu casa, en toda España</span></span></label>
+          <label class="opt"><input type="radio" name="entrega" value="Recogida en Terrassa" ${cliente.entrega==="Recogida en Terrassa"?"checked":""}><span class="o-txt"><span class="o-t">Recogida</span><span class="o-s">En Terrassa, quedamos por WhatsApp</span></span></label>
+        </div>
+      </div>
+      <div id="dirBox" class="campos">
+        <h4 class="q">Dirección. <span>¿Dónde te lo enviamos?</span></h4>
+        <div>
+          <label class="label" for="fCalle">Calle y número</label>
+          <input id="fCalle" autocomplete="address-line1" placeholder="C/ Mayor, 12" value="${esc(cliente.calle||"")}">
+          <div class="err" id="eCalle">Escribe la calle y el número.</div>
+        </div>
+        <div>
+          <label class="label" for="fPiso">Piso y puerta <span class="opcional">(opcional)</span></label>
+          <input id="fPiso" autocomplete="address-line2" placeholder="3º 2ª" value="${esc(cliente.piso||"")}">
+        </div>
+        <div class="campos2">
+          <div>
+            <label class="label" for="fCP">Código postal</label>
+            <input id="fCP" autocomplete="postal-code" inputmode="numeric" maxlength="5" placeholder="08221" value="${esc(cliente.cp||"")}">
+            <div class="err" id="eCP">Escribe un código postal de 5 cifras.</div>
+          </div>
+          <div>
+            <label class="label" for="fPob">Población</label>
+            <input id="fPob" autocomplete="address-level2" placeholder="Terrassa" value="${esc(cliente.poblacion||"")}">
+            <div class="err" id="ePob">Escribe la población.</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h4 class="q" id="lPago">Pago. <span>Cuando te lo confirmemos.</span></h4>
+        <div class="opts cols2" role="radiogroup" aria-labelledby="lPago">
+          <label class="opt"><input type="radio" name="pago" value="Bizum" ${cliente.pago!=="Efectivo"?"checked":""}><span class="o-txt"><span class="o-t">Bizum</span><span class="o-s">Te pasamos el número por WhatsApp</span></span></label>
+          <label class="opt"><input type="radio" name="pago" value="Efectivo" ${cliente.pago==="Efectivo"?"checked":""}><span class="o-txt"><span class="o-t">Efectivo</span><span class="o-s">Al recogerlo en mano</span></span></label>
+        </div>
+      </div>
+      <div>
+        <label class="label" for="fNotas">Algo más <span class="opcional">(opcional)</span></label>
+        <textarea id="fNotas" placeholder="Para cuándo lo necesitas, si es un regalo…"></textarea>
+      </div>
+      <div class="err" id="eEnvio"></div>
+      <button class="pill block" type="submit" id="enviar">Enviar pedido por WhatsApp</button>
+      <p class="small">Se abrirá WhatsApp con tu pedido ya escrito. No pagas nada ahora: te contestamos para confirmarlo.</p>
+    </form>`;
+  body.querySelectorAll("[data-rm]").forEach(b=>b.addEventListener("click", ()=>{ cesta.splice(+b.dataset.rm,1); guardarCesta(); pintarCesta(); }));
+  body.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click", ()=>{ const k=+b.dataset.edit; cerrar("cartBg"); abrirElegir(cesta[k].producto_id, k); }));
+  $("#seguir").addEventListener("click", ()=>{ cerrar("cartBg"); $("#coleccion").scrollIntoView({behavior:"smooth"}); });
+  const dir=()=>{ $("#dirBox").hidden = body.querySelector('input[name="entrega"]:checked').value!=="Envío"; };
+  body.querySelectorAll('input[name="entrega"]').forEach(r=>r.addEventListener("change",dir)); dir();
+  [["fNombre","eNombre"],["fApellidos","eApellidos"],["fTel","eTel"],["fCalle","eCalle"],["fCP","eCP"],["fPob","ePob"]].forEach(([f,e])=>$("#"+f).addEventListener("input", ()=>$("#"+e).classList.remove("show")));
+  $("#form").addEventListener("submit", enviar);
+}
+function nuevaRef(){
+  const a=new Date(), dd=n=>String(n).padStart(2,"0");
+  return `ND-${dd(a.getDate())}${dd(a.getMonth()+1)}-${dd(a.getHours())}${dd(a.getMinutes())}`;
+}
+function guardarEnApp(ref, c, piezas){
+  if(SUPABASE_URL.startsWith("PEGAR")) return;
+  const cuerpo={ ref,
+    cliente:{nombre:c.nombre, apellidos:c.apellidos, telefono:c.telefono, instagram:c.instagram, entrega:c.entrega, pago:c.pago,
+             calle:c.calle, piso:c.piso, cp:c.cp, poblacion:c.poblacion, notas:c.notas},
+    piezas: piezas.map(it=>({producto:it.producto, precio:it.precio, tela_nombre:it.tela_nombre, tela_img:(it.tela_img?new URL(it.tela_img, location.href).href:null),
+             numero:it.numero, opcion:it.opcion||null, nota:(it.nota!==undefined?it.nota:it.detalles)||null})) };
+  const h={"Content-Type":"application/json", "apikey":SUPABASE_KEY, "Prefer":"return=minimal"};
+  if(SUPABASE_KEY.startsWith("eyJ")) h.Authorization="Bearer "+SUPABASE_KEY;
+  try{ fetch(SUPABASE_URL+"/rest/v1/pedidos_web", {method:"POST", headers:h, body:JSON.stringify(cuerpo), keepalive:true}).catch(()=>{}); }catch(e){}
+}
+function resumenTexto(c, ref){
+  ref = ref || nuevaRef();
+  const ahora=new Date();
+  const fecha=ahora.toLocaleDateString("es-ES",{weekday:"long", day:"numeric", month:"long"});
+  const piezas=cesta.map((it,k)=>{
+    const lin=[`*${k+1}. ${it.producto}*${it.precio!=null?` — ${euros(it.precio)}`:" — precio a consultar"}`];
+    if(it.tela_nombre) lin.push(`   🧵 Tela: ${it.tela_nombre} · nº *${it.numero}*`);
+    const opcion = it.opcion!==undefined ? it.opcion : null;
+    const nota = it.nota!==undefined ? it.nota : it.detalles;
+    if(opcion) lin.push(`   ✂️ ${opcion}`);
+    if(nota) lin.push(`   📝 _${nota}_`);
+    return lin.join("\n");
+  });
+  const conPrecio=cesta.filter(it=>it.precio!=null);
+  const total=conPrecio.reduce((s,it)=>s+it.precio,0);
+  const consultar=cesta.length-conPrecio.length;
+  const n=cesta.length;
+  const out=[];
+  out.push(`¡Hola Nerea! 🌸`);
+  out.push(`Te escribo desde la web de *Ndeocaki* para hacer un pedido.`);
+  out.push(``);
+  out.push(`🛍️ *MI PEDIDO* (${n} ${n===1?"pieza":"piezas"})`);
+  out.push(`Ref. ${ref} · ${fecha}`);
+  out.push(`————————————`);
+  out.push(piezas.join("\n\n"));
+  out.push(`————————————`);
+  out.push(`💶 *Total: ${euros(total)}*`+(consultar?` + ${consultar===1?"1 pieza":consultar+" piezas"} a consultar`:""));
+  if(c.entrega==="Envío") out.push(`_(gastos de envío aparte)_`);
+  out.push(``);
+  out.push(`👤 *MIS DATOS*`);
+  out.push(`${c.nombre} ${c.apellidos}`);
+  out.push(`📞 ${c.telefono}`);
+  if(c.instagram) out.push(`📸 @${c.instagram}`);
+  out.push(``);
+  out.push(c.entrega==="Envío" ? `📦 *ENTREGA:* Envío a domicilio` : `📍 *ENTREGA:* Recogida en Terrassa`);
+  if(c.entrega==="Envío") out.push(c.direccion);
+  out.push(`💳 *PAGO:* ${c.pago}`);
+  if(c.notas){ out.push(``); out.push(`💬 *NOTAS*`); out.push(c.notas); }
+  out.push(``);
+  out.push(`Quedo a la espera de tu confirmación. ¡Muchas gracias! 🤍`);
+  return out.join("\n");
+}
+function enviar(e){
+  e.preventDefault();
+  const c={
+    nombre:$("#fNombre").value.trim(),
+    apellidos:$("#fApellidos").value.trim(),
+    telefono:$("#fTel").value.trim(),
+    calle:$("#fCalle").value.trim(), piso:$("#fPiso").value.trim(), cp:$("#fCP").value.trim(), poblacion:$("#fPob").value.trim(),
+    instagram:$("#fIg").value.trim().replace(/^https?:\/\/(www\.)?instagram\.com\//i,"").replace(/^@+/,"").replace(/[/?].*$/,""),
+    entrega:document.querySelector('input[name="entrega"]:checked').value,
+    pago:document.querySelector('input[name="pago"]:checked').value,
+    notas:$("#fNotas").value.trim(),
+  };
+  const fallos=[];
+  const marca=(ok,f,e)=>{ if(!ok){ $("#"+e).classList.add("show"); fallos.push(f); } };
+  marca(c.nombre, "fNombre","eNombre");
+  marca(c.apellidos, "fApellidos","eApellidos");
+  const digitos=c.telefono.replace(/\D/g,"");
+  marca(digitos.length>=9 && digitos.length<=13, "fTel","eTel");
+  if(c.entrega==="Envío"){
+    marca(c.calle.length>=4, "fCalle","eCalle");
+    marca(/^\d{5}$/.test(c.cp), "fCP","eCP");
+    marca(c.poblacion, "fPob","ePob");
+  }
+  if(fallos.length){ $("#"+fallos[0]).focus(); $("#"+fallos[0]).scrollIntoView({behavior:"smooth", block:"center"}); return; }
+  c.direccion = c.entrega==="Envío" ? [c.calle, c.piso, `${c.cp} ${c.poblacion}`].filter(Boolean).join(", ") : "";
+  cliente={...c}; delete cliente.notas; store.set("ndeocaki_cliente", cliente);
+  const ref=nuevaRef();
+  const texto=resumenTexto(c, ref);
+  const url=`https://api.whatsapp.com/send?phone=${WHATSAPP}&text=${encodeURIComponent(texto)}`;
+  // Intentamos abrir WhatsApp directamente; si el navegador lo bloquea, queda el botón.
+  let abierto=null; try{ abierto=window.open(url, "_blank", "noopener"); }catch(err){}
+  guardarEnApp(ref, c, cesta.slice());
+  cesta=[]; guardarCesta();
+  $("#cartBody").innerHTML=`
+    <div class="ok">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg>
+      <h3>Último paso: envía el mensaje</h3>
+      <p>En WhatsApp tienes tu pedido ya escrito. Pulsa enviar y Nerea te contestará para confirmarlo.</p>
+    </div>
+    <a class="pill block" href="${esc(url)}" target="_blank" rel="noopener">Abrir WhatsApp</a>
+    <div class="resumen">${esc(texto)}</div>
+    <button class="pill soft block" type="button" id="copiarTxt">Copiar el pedido</button>
+    <p class="small">¿Prefieres Instagram? Copia el pedido y pégalo en un mensaje a @ndeocaki.</p>`;
+  $("#cartBg .sheet").scrollTop=0;
+  $("#copiarTxt").addEventListener("click", async ()=>{
+    try{ await navigator.clipboard.writeText(texto); toast("Pedido copiado"); }
+    catch(err){ const r=document.createRange(); r.selectNodeContents($(".resumen")); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); toast("Selecciona y copia el texto"); }
+  });
+}
+
+/* ===== Inicio ===== */
+const ajustarCabecera=()=>document.documentElement.style.setProperty('--top-h', ($('.top').offsetHeight)+'px');
+ajustarCabecera(); addEventListener('resize', ajustarCabecera);
+pintarProductos();
+pintarMarkets();
+vigilarSecciones();
+guardarCesta();
+cargarTelas();
+</script>
+</body>
+</html>
