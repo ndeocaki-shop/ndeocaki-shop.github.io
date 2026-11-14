@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Ndeocaki · Hecho a mano</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Neceseres, bolsos y capas de cumpleaños cosidos a mano. Elige tu pieza y tu tela.">
+<meta name="description" content="Neceseres y bolsos cosidos a mano. Elige tu pieza y tu tela.">
 <link rel="icon" href="favicon.png">
 <link rel="apple-touch-icon" href="icono.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -302,6 +302,10 @@
   .rp-item{display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid color-mix(in srgb, var(--ink) 10%, transparent);}
   .rp-item small{color:var(--ink-2);}
   .rp-total{font-weight:700; border-bottom:0;}
+  .arriba{position:fixed; right:calc(16px + env(safe-area-inset-right, 0px)); bottom:calc(18px + env(safe-area-inset-bottom, 0px)); z-index:40; width:50px; height:50px; border-radius:50%; border:0; cursor:pointer; color:#fff; background:linear-gradient(180deg, color-mix(in srgb, var(--hilo) 88%, #fff), var(--hilo)); box-shadow:0 8px 22px color-mix(in srgb, var(--hilo) 35%, transparent), inset 0 1px 0 rgba(255,255,255,.35); display:grid; place-items:center; transition:transform .2s;}
+  .arriba:hover{transform:translateY(-2px);}
+  .arriba:focus-visible{outline:3px solid color-mix(in srgb, var(--hilo) 45%, transparent); outline-offset:3px;}
+  .arriba svg{width:24px; height:24px;}
 </style>
 </head>
 <body>
@@ -323,7 +327,7 @@
     <div class="wrap">
       <img class="script" src="logo.png" alt="" aria-hidden="true">
       <h1>Hecho a mano.<br>Pieza a pieza.</h1>
-      <p class="sub">Bolsos, neceseres y capas cosidos uno a uno, en la tela que tú elijas.</p>
+      <p class="sub">Bolsos y neceseres cosidos uno a uno, en la tela que tú elijas.</p>
       <div class="cta">
         <a class="pill" href="#coleccion">Elegir el mío</a>
         <a class="link" href="#telas">Ver las telas ›</a>
@@ -505,7 +509,6 @@ const PRODUCTOS = [
   {id:"estuche", nombre:"Estuche", corto:"Estuche", precio:15, tag:"", desc:"Alargado, con cremallera, para lápices, maquillaje o lo que quieras.", imgs:nv("estuche",2), pista:"Cualquier detalle que quieras comentar."},
   {id:"fundas-portatil", nombre:"Funda de portátil", corto:"Portátil", precio:30, tag:"", desc:"A la medida de tu portátil, con volante o lisa.", imgs:[...nv("portatil",3), ...old("fundas-portatil",2)], pista:"Pulgadas o medidas de tu portátil."},
   {id:"fundas-kindle", nombre:"Funda de Kindle", corto:"Kindle", precio:15, tag:"", desc:"Acolchada y con volante, para proteger tu e-reader.", imgs:[...nv("kindle",2), ...old("fundas-kindle",2)], pista:"Modelo de tu e-reader o medidas."},
-  {id:"capas", nombre:"Capa de cumpleaños", corto:"Capas", precio:40, tag:"Bajo pedido", desc:"Estilo Waldorf, con el nombre bordado a mano y parches para cada año.", imgs:[...ig("capas",3), ...old("capas",6)], pista:"Nombre a bordar y edad del peque."},
 ];
 const MARKETS = [...nv("market",4), "ig-market-0.webp"];
 const foto = (p,i) => p.imgs[i];
@@ -681,7 +684,7 @@ function pintarCats(){
 }
 $("#pickCats").addEventListener("click", e=>{ const b=e.target.closest("[data-cat]"); if(!b) return; eleccion.cat=b.dataset.cat; pintarCats(); pintarPicker(); $("#secTelas").scrollIntoView({behavior:"smooth", block:"start"}); });
 function pintarPicker(){
-  if(!TELAS.length){ $("#pickTelas").innerHTML = `<div class="empty">Ahora mismo no hay telas publicadas. Envíalo igualmente y lo hablamos por WhatsApp.</div>`; return; }
+  if(!TELAS.length){ $("#pickTelas").innerHTML = `<div class="empty">Ahora mismo no hay telas publicadas. Vuelve a intentarlo en un rato.</div>`; return; }
   const idx = TELAS.map((t,i)=>i).filter(i=>CATS().length<2 || TELAS[i].cat===eleccion.cat);
   $("#pickTelas").innerHTML = `<div class="pick-grid" role="radiogroup" aria-labelledby="qTelas">${idx.map(i=>{
     const t=TELAS[i];
@@ -860,7 +863,7 @@ function pintarCesta(){
         <h4 class="q" id="lEntrega">Entrega. <span>¿Cómo lo quieres recibir?</span></h4>
         <div class="opts cols2" role="radiogroup" aria-labelledby="lEntrega">
           <label class="opt"><input type="radio" name="entrega" value="Envío" ${cliente.entrega!=="Recogida en Terrassa"?"checked":""}><span class="o-txt"><span class="o-t">Envío</span><span class="o-s">A tu casa, en toda España</span></span></label>
-          <label class="opt"><input type="radio" name="entrega" value="Recogida en Terrassa" ${cliente.entrega==="Recogida en Terrassa"?"checked":""}><span class="o-txt"><span class="o-t">Recogida</span><span class="o-s">En Terrassa, quedamos por WhatsApp</span></span></label>
+          <label class="opt"><input type="radio" name="entrega" value="Recogida en Terrassa" ${cliente.entrega==="Recogida en Terrassa"?"checked":""}><span class="o-txt"><span class="o-t">Recogida</span><span class="o-s">En Terrassa, te contactaré con la mayor brevedad posible</span></span></label>
         </div>
       </div>
       <div id="dirBox" class="campos">
@@ -1040,6 +1043,14 @@ pintarMarkets();
 vigilarSecciones();
 guardarCesta();
 cargarTelas();
+</script>
+<button class="arriba" type="button" id="arriba" aria-label="Volver al inicio de la página" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+<script>
+(()=>{const b=document.getElementById("arriba");
+  const ver=()=>{ const abierta=document.querySelector(".open"); b.hidden = window.scrollY < window.innerHeight*0.9 || !!abierta; };
+  addEventListener("scroll", ver, {passive:true}); addEventListener("resize", ver); setInterval(ver, 800);
+  b.addEventListener("click", ()=>{ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches; scrollTo({top:0, behavior:reduce?"auto":"smooth"}); b.blur(); });
+})();
 </script>
 </body>
 </html>
