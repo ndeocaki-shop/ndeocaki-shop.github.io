@@ -296,6 +296,10 @@
     html{scroll-behavior:auto;}
     *{animation:none !important; transition:none !important;}
   }
+  .pasos-fin{border:1px solid color-mix(in srgb, var(--hilo) 30%, transparent); background:color-mix(in srgb, var(--hilo) 6%, transparent); border-radius:18px; padding:16px 18px; margin:6px 0 14px;}
+  .pasos-fin .pf-t{font-weight:600; margin:0 0 8px;}
+  .pasos-fin ol{margin:0; padding-left:20px; line-height:1.6;}
+  .pf-aviso, .ok .pf-aviso{color:var(--hilo); font-weight:600; font-size:14px; margin:10px 0 0;}
 </style>
 </head>
 <body>
@@ -475,6 +479,7 @@ const TELAS_WEB = [
   {cat:"Rayas", nombre:"Rayas 5", imagen:"rayas-5.webp", nums:"1-6"},
   {cat:"Rayas", nombre:"Rayas 6", imagen:"rayas-6.webp", nums:"1-6"},
   {cat:"Rayas", nombre:"Rayas 7", imagen:"rayas-7.webp", nums:"1-20"},
+  {cat:"Vichy", nombre:"Vichy 9", imagen:"texturas-1.webp", nums:"41-48"},
   {cat:"Lisos", nombre:"Lisos 1", imagen:"lisos-1.webp", nums:"24-55"},
   {cat:"Lisos", nombre:"Lisos 2", imagen:"lisos-2.webp", nums:"1-23"},
   {cat:"Lisos", nombre:"Lisos 3", imagen:"lisos-3.webp", nums:"4-5,56-77"},
@@ -482,8 +487,7 @@ const TELAS_WEB = [
   {cat:"Acolchadas", nombre:"Acolchadas 2", imagen:"acolchadas-2.webp", nums:"1-4"},
   {cat:"Acolchadas", nombre:"Acolchadas 3", imagen:"acolchadas-3.webp", nums:"1-2"},
   {cat:"Pana", nombre:"Pana", imagen:"pana-1.webp", nums:"1-18"},
-  {cat:"Texturas", nombre:"Texturas", imagen:"texturas-1.webp", nums:"41-48"},
-];
+  ];
 
 /* ===== Productos ===== */
 const ig=(c,n)=>Array.from({length:n},(_,i)=>`ig-${c}-${i}.webp`);
@@ -893,8 +897,17 @@ function pintarCesta(){
         <textarea id="fNotas" placeholder="Para cuándo lo necesitas, si es un regalo…"></textarea>
       </div>
       <div class="err" id="eEnvio"></div>
-      <button class="pill block" type="submit" id="enviar">Enviar pedido por WhatsApp</button>
-      <p class="small">Se abrirá WhatsApp con tu pedido ya escrito. No pagas nada ahora: te contestamos para confirmarlo.</p>
+      <div class="pasos-fin" role="note">
+        <p class="pf-t">Cómo se finaliza tu pedido</p>
+        <ol>
+          <li>Pulsa <b>Finalizar pedido</b>.</li>
+          <li>Se abrirá WhatsApp con tu pedido ya escrito.</li>
+          <li>Pulsa <b>enviar</b> en WhatsApp.</li>
+        </ol>
+        <p class="pf-aviso">Si no envías el mensaje de WhatsApp, el pedido no se hace efectivo.</p>
+      </div>
+      <button class="pill block" type="submit" id="enviar">Finalizar pedido</button>
+      <p class="small">No pagas nada ahora: te contestamos por WhatsApp para confirmarlo.</p>
     </form>`;
   body.querySelectorAll("[data-rm]").forEach(b=>b.addEventListener("click", ()=>{ cesta.splice(+b.dataset.rm,1); guardarCesta(); pintarCesta(); }));
   body.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click", ()=>{ const k=+b.dataset.edit; cerrar("cartBg"); abrirElegir(cesta[k].producto_id, k); }));
@@ -996,11 +1009,12 @@ function enviar(e){
   cesta=[]; guardarCesta();
   $("#cartBody").innerHTML=`
     <div class="ok">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg>
-      <h3>Último paso: envía el mensaje</h3>
-      <p>En WhatsApp tienes tu pedido ya escrito. Pulsa enviar y Nerea te contestará para confirmarlo.</p>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5Z"/><path d="M8.5 11.5h7M8.5 8.5h5"/></svg>
+      <h3>Falta un paso: envía el mensaje</h3>
+      <p>Tu pedido ya está escrito en WhatsApp. <b>Pulsa enviar</b> para que quede hecho y Nerea te contestará para confirmarlo.</p>
+      <p class="pf-aviso">Si no envías el mensaje, el pedido no se hace efectivo.</p>
     </div>
-    <a class="pill block" href="${esc(url)}" target="_blank" rel="noopener">Abrir WhatsApp</a>
+    <a class="pill block" href="${esc(url)}" target="_blank" rel="noopener">Enviar el pedido por WhatsApp</a>
     <div class="resumen">${esc(texto)}</div>
     <button class="pill soft block" type="button" id="copiarTxt">Copiar el pedido</button>
     <p class="small">¿Prefieres Instagram? Copia el pedido y pégalo en un mensaje a @ndeocaki.</p>`;
