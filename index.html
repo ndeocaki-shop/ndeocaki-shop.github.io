@@ -5,8 +5,8 @@
 <title>Ndeocaki · Hecho a mano</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Neceseres, bolsos y capas de cumpleaños cosidos a mano. Elige tu pieza y tu tela.">
-<link rel="icon" href="img/favicon.png">
-<link rel="apple-touch-icon" href="img/icono.png">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="icono.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ndeocaki">
@@ -76,7 +76,7 @@
   .chooser a.on img{box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--hilo);}
 
   /* ---------- Portada: foto a pantalla completa ---------- */
-  .hero{position:relative; height:min(88svh, 900px); min-height:520px; overflow:hidden; color:#fff; display:flex; align-items:flex-end; background:#2a2224 url("img/n-portada-1-fondo.webp") center/cover;}
+  .hero{position:relative; height:min(88svh, 900px); min-height:520px; overflow:hidden; color:#fff; display:flex; align-items:flex-end; background:#2a2224 url("n-portada-1-fondo.webp") center/cover;}
   .hero > img{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:50% 50%;}
   .hero::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(20,10,12,.10) 0%, rgba(20,10,12,.38) 38%, rgba(20,10,12,.72) 100%);}
   .hero .wrap{position:relative; z-index:1; width:100%; padding-bottom:56px; text-align:center;}
@@ -302,7 +302,7 @@
 
 <header class="top">
   <div class="wrap bar">
-    <a href="#inicio" aria-label="Ndeocaki, inicio"><img class="logo" src="img/logo.png" alt="Ndeocaki"></a>
+    <a href="#inicio" aria-label="Ndeocaki, inicio"><img class="logo" src="logo.png" alt="Ndeocaki"></a>
     <button class="bag" id="cartBtn" type="button" aria-label="Ver mi pedido">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>
       <span>Mi pedido</span><span class="n" id="cartCount" data-zero="1">0</span>
@@ -313,9 +313,9 @@
 
 <main id="inicio">
   <section class="hero" aria-label="Portada">
-    <img src="img/n-portada-1.webp" alt="Puesto de Ndeocaki en un market, con neceseres, monederos y estuches de cuadros sobre la mesa">
+    <img src="n-portada-1.webp" alt="Puesto de Ndeocaki en un market, con neceseres, monederos y estuches de cuadros sobre la mesa">
     <div class="wrap">
-      <img class="script" src="img/logo.png" alt="" aria-hidden="true">
+      <img class="script" src="logo.png" alt="" aria-hidden="true">
       <h1>Hecho a mano.<br>Pieza a pieza.</h1>
       <p class="sub">Bolsos, neceseres y capas cosidos uno a uno, en la tela que tú elijas.</p>
       <div class="cta">
@@ -364,7 +364,7 @@
 
 <footer>
   <div class="wrap foot">
-    <img class="logo" src="img/logo.png" alt="Ndeocaki">
+    <img class="logo" src="logo.png" alt="Ndeocaki">
     <span>Envíos por toda España y entregas en Terrassa.</span>
     <a href="https://www.instagram.com/ndeocaki/" target="_blank" rel="noopener">@ndeocaki en Instagram</a>
   </div>
@@ -458,50 +458,50 @@ const WHATSAPP = "34622156393";
 // Supabase: aquí se guardan los pedidos para que lleguen solos a la app de Ndeocaki
 const SUPABASE_URL  = "PEGAR_PROJECT_URL";
 const SUPABASE_KEY  = "PEGAR_CLAVE_PUBLICA";   // número que recibe los pedidos (con prefijo 34, sin + ni espacios)
-/* Telas: pon las imágenes en telas/ y añádelas aquí, en el orden en que quieres que salgan */
+/* Telas: pon las imágenes en  y añádelas aquí, en el orden en que quieres que salgan */
 const TELAS_WEB = [
-  {cat:"Vichy", nombre:"Vichy 1", imagen:"telas/vichy-1.webp", nums:"1-15,17-19"},
-  {cat:"Vichy", nombre:"Vichy 2", imagen:"telas/vichy-2.webp", nums:"1-21"},
-  {cat:"Vichy", nombre:"Vichy 3", imagen:"telas/vichy-3.webp", nums:"20-33"},
-  {cat:"Vichy", nombre:"Vichy 4", imagen:"telas/vichy-4.webp", nums:"80-85"},
-  {cat:"Vichy", nombre:"Vichy 5", imagen:"telas/vichy-5.webp", nums:"2,4-8"},
-  {cat:"Vichy", nombre:"Vichy 6", imagen:"telas/vichy-6.webp", nums:"51-72"},
-  {cat:"Vichy", nombre:"Vichy 7", imagen:"telas/vichy-7.webp", nums:"1-17"},
-  {cat:"Vichy", nombre:"Vichy 8", imagen:"telas/vichy-8.webp", nums:"1-16"},
-  {cat:"Rayas", nombre:"Rayas 1", imagen:"telas/rayas-1.webp", nums:"2-5"},
-  {cat:"Rayas", nombre:"Rayas 2", imagen:"telas/rayas-2.webp", nums:"1-3"},
-  {cat:"Rayas", nombre:"Rayas 3", imagen:"telas/rayas-3.webp", nums:"1-3"},
-  {cat:"Rayas", nombre:"Rayas 4", imagen:"telas/rayas-4.webp", nums:"1-2"},
-  {cat:"Rayas", nombre:"Rayas 5", imagen:"telas/rayas-5.webp", nums:"1-6"},
-  {cat:"Rayas", nombre:"Rayas 6", imagen:"telas/rayas-6.webp", nums:"1-6"},
-  {cat:"Rayas", nombre:"Rayas 7", imagen:"telas/rayas-7.webp", nums:"1-20"},
-  {cat:"Lisos", nombre:"Lisos 1", imagen:"telas/lisos-1.webp", nums:"24-55"},
-  {cat:"Lisos", nombre:"Lisos 2", imagen:"telas/lisos-2.webp", nums:"1-23"},
-  {cat:"Lisos", nombre:"Lisos 3", imagen:"telas/lisos-3.webp", nums:"4-5,56-77"},
-  {cat:"Acolchadas", nombre:"Acolchadas 1", imagen:"telas/acolchadas-1.webp", nums:"1-4"},
-  {cat:"Acolchadas", nombre:"Acolchadas 2", imagen:"telas/acolchadas-2.webp", nums:"1-4"},
-  {cat:"Acolchadas", nombre:"Acolchadas 3", imagen:"telas/acolchadas-3.webp", nums:"1-2"},
-  {cat:"Pana", nombre:"Pana", imagen:"telas/pana-1.webp", nums:"1-18"},
-  {cat:"Texturas", nombre:"Texturas", imagen:"telas/texturas-1.webp", nums:"41-48"},
+  {cat:"Vichy", nombre:"Vichy 1", imagen:"vichy-1.webp", nums:"1-15,17-19"},
+  {cat:"Vichy", nombre:"Vichy 2", imagen:"vichy-2.webp", nums:"1-21"},
+  {cat:"Vichy", nombre:"Vichy 3", imagen:"vichy-3.webp", nums:"20-33"},
+  {cat:"Vichy", nombre:"Vichy 4", imagen:"vichy-4.webp", nums:"80-85"},
+  {cat:"Vichy", nombre:"Vichy 5", imagen:"vichy-5.webp", nums:"2,4-8"},
+  {cat:"Vichy", nombre:"Vichy 6", imagen:"vichy-6.webp", nums:"51-72"},
+  {cat:"Vichy", nombre:"Vichy 7", imagen:"vichy-7.webp", nums:"1-17"},
+  {cat:"Vichy", nombre:"Vichy 8", imagen:"vichy-8.webp", nums:"1-16"},
+  {cat:"Rayas", nombre:"Rayas 1", imagen:"rayas-1.webp", nums:"2-5"},
+  {cat:"Rayas", nombre:"Rayas 2", imagen:"rayas-2.webp", nums:"1-3"},
+  {cat:"Rayas", nombre:"Rayas 3", imagen:"rayas-3.webp", nums:"1-3"},
+  {cat:"Rayas", nombre:"Rayas 4", imagen:"rayas-4.webp", nums:"1-2"},
+  {cat:"Rayas", nombre:"Rayas 5", imagen:"rayas-5.webp", nums:"1-6"},
+  {cat:"Rayas", nombre:"Rayas 6", imagen:"rayas-6.webp", nums:"1-6"},
+  {cat:"Rayas", nombre:"Rayas 7", imagen:"rayas-7.webp", nums:"1-20"},
+  {cat:"Lisos", nombre:"Lisos 1", imagen:"lisos-1.webp", nums:"24-55"},
+  {cat:"Lisos", nombre:"Lisos 2", imagen:"lisos-2.webp", nums:"1-23"},
+  {cat:"Lisos", nombre:"Lisos 3", imagen:"lisos-3.webp", nums:"4-5,56-77"},
+  {cat:"Acolchadas", nombre:"Acolchadas 1", imagen:"acolchadas-1.webp", nums:"1-4"},
+  {cat:"Acolchadas", nombre:"Acolchadas 2", imagen:"acolchadas-2.webp", nums:"1-4"},
+  {cat:"Acolchadas", nombre:"Acolchadas 3", imagen:"acolchadas-3.webp", nums:"1-2"},
+  {cat:"Pana", nombre:"Pana", imagen:"pana-1.webp", nums:"1-18"},
+  {cat:"Texturas", nombre:"Texturas", imagen:"texturas-1.webp", nums:"41-48"},
 ];
 
 /* ===== Productos ===== */
-const ig=(c,n)=>Array.from({length:n},(_,i)=>`img/ig-${c}-${i}.webp`);
-const old=(c,n)=>Array.from({length:n},(_,i)=>`img/${c}-${i}.jpg`);
-const nv=(c,n)=>Array.from({length:n},(_,i)=>`img/n-${c}-${i}.webp`);
+const ig=(c,n)=>Array.from({length:n},(_,i)=>`ig-${c}-${i}.webp`);
+const old=(c,n)=>Array.from({length:n},(_,i)=>`${c}-${i}.jpg`);
+const nv=(c,n)=>Array.from({length:n},(_,i)=>`n-${c}-${i}.webp`);
 const PRODUCTOS = [
-  {id:"scrunchie", nombre:"Bolso scrunchie", corto:"Scrunchie", precio:35, tag:"El más pedido", desc:"Asas fruncidas y lazada ajustable para llevarlo al hombro o cruzado.", imgs:["img/ig-scrunchie-6.webp","img/ig-scrunchie-7.webp","img/n-scrunchie-0.webp","img/ig-scrunchie-0.webp","img/n-scrunchie-1.webp","img/ig-scrunchie-4.webp","img/n-scrunchie-2.webp","img/ig-scrunchie-1.webp","img/ig-scrunchie-5.webp","img/n-scrunchie-3.webp","img/ig-scrunchie-2.webp"], pista:"Cualquier detalle que quieras comentar."},
+  {id:"scrunchie", nombre:"Bolso scrunchie", corto:"Scrunchie", precio:35, tag:"El más pedido", desc:"Asas fruncidas y lazada ajustable para llevarlo al hombro o cruzado.", imgs:["ig-scrunchie-6.webp","ig-scrunchie-7.webp","n-scrunchie-0.webp","ig-scrunchie-0.webp","n-scrunchie-1.webp","ig-scrunchie-4.webp","n-scrunchie-2.webp","ig-scrunchie-1.webp","ig-scrunchie-5.webp","n-scrunchie-3.webp","ig-scrunchie-2.webp"], pista:"Cualquier detalle que quieras comentar."},
   {id:"neceser-plano", nombre:"Neceser plano", corto:"Plano", precio:15, tag:"Nuevo", desc:"Multiusos y personalizado al detalle: liso, de cuadros, a rayas, con frase o sin ella.", imgs:[...ig("plano",5), ...nv("plano",2)], pista:"¿Con frase? Escríbela aquí."},
   {id:"neceseres", nombre:"Neceser", corto:"Neceser", precio:20, tag:"", desc:"El de siempre, cosido a mano. Con asa o sin asa.", imgs:[...nv("neceser",6), ...ig("neceser",2)], pista:"Cualquier detalle que quieras comentar.", opciones:{titulo:"Asa", pregunta:"¿Con o sin?", valores:[{t:"Con asa", s:"Para colgarlo o llevarlo en la mano"},{t:"Sin asa", s:"Más limpio y compacto"}]}},
-  {id:"neceseres-xxl", nombre:"Neceser XXL", corto:"XXL", precio:25, tag:"", desc:"Cabe hasta el secador. Espacio de sobra para llevarlo todo.", imgs:["img/xxl-nerea-0.webp", ...nv("xxl",2), ...ig("xxl",4)], pista:"Cualquier detalle que quieras comentar.", opciones:{titulo:"Asa", pregunta:"¿Con o sin?", valores:[{t:"Con asa", s:"Para colgarlo o llevarlo en la mano"},{t:"Sin asa", s:"Más limpio y compacto"}]}},
-  {id:"bolsos-viaje", nombre:"Bolso de viaje", corto:"Viaje", precio:50, tag:"", desc:"Gran capacidad y bolsillo interior. En rizo de toalla o en cuadros vichy.", imgs:[...nv("viaje",6), "img/ig-tote-0.webp", "img/ig-tote-2.webp", "img/viaje-nerea-0.webp", ...ig("viaje",4)], pista:"Cualquier detalle que quieras comentar."},
-  {id:"tote-bags", nombre:"Tote bag", corto:"Tote", precio:35, tag:"", desc:"Para el día a día, con todo lo que necesitas dentro.", imgs:[...nv("tote",2), "img/ig-tote-1.webp", ...old("tote-bags",2)], pista:"Cualquier detalle que quieras comentar."},
+  {id:"neceseres-xxl", nombre:"Neceser XXL", corto:"XXL", precio:25, tag:"", desc:"Cabe hasta el secador. Espacio de sobra para llevarlo todo.", imgs:["xxl-nerea-0.webp", ...nv("xxl",2), ...ig("xxl",4)], pista:"Cualquier detalle que quieras comentar.", opciones:{titulo:"Asa", pregunta:"¿Con o sin?", valores:[{t:"Con asa", s:"Para colgarlo o llevarlo en la mano"},{t:"Sin asa", s:"Más limpio y compacto"}]}},
+  {id:"bolsos-viaje", nombre:"Bolso de viaje", corto:"Viaje", precio:50, tag:"", desc:"Gran capacidad y bolsillo interior. En rizo de toalla o en cuadros vichy.", imgs:[...nv("viaje",6), "ig-tote-0.webp", "ig-tote-2.webp", "viaje-nerea-0.webp", ...ig("viaje",4)], pista:"Cualquier detalle que quieras comentar."},
+  {id:"tote-bags", nombre:"Tote bag", corto:"Tote", precio:35, tag:"", desc:"Para el día a día, con todo lo que necesitas dentro.", imgs:[...nv("tote",2), "ig-tote-1.webp", ...old("tote-bags",2)], pista:"Cualquier detalle que quieras comentar."},
   {id:"estuche", nombre:"Estuche", corto:"Estuche", precio:15, tag:"", desc:"Alargado, con cremallera, para lápices, maquillaje o lo que quieras.", imgs:nv("estuche",2), pista:"Cualquier detalle que quieras comentar."},
   {id:"fundas-portatil", nombre:"Funda de portátil", corto:"Portátil", precio:30, tag:"", desc:"A la medida de tu portátil, con volante o lisa.", imgs:[...nv("portatil",3), ...old("fundas-portatil",2)], pista:"Pulgadas o medidas de tu portátil."},
   {id:"fundas-kindle", nombre:"Funda de Kindle", corto:"Kindle", precio:15, tag:"", desc:"Acolchada y con volante, para proteger tu e-reader.", imgs:[...nv("kindle",2), ...old("fundas-kindle",2)], pista:"Modelo de tu e-reader o medidas."},
   {id:"capas", nombre:"Capa de cumpleaños", corto:"Capas", precio:40, tag:"Bajo pedido", desc:"Estilo Waldorf, con el nombre bordado a mano y parches para cada año.", imgs:[...ig("capas",3), ...old("capas",6)], pista:"Nombre a bordar y edad del peque."},
 ];
-const MARKETS = [...nv("market",4), "img/ig-market-0.webp"];
+const MARKETS = [...nv("market",4), "ig-market-0.webp"];
 const foto = (p,i) => p.imgs[i];
 
 /* ===== Utilidades ===== */
