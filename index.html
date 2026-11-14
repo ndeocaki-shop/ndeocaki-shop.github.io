@@ -296,10 +296,12 @@
     html{scroll-behavior:auto;}
     *{animation:none !important; transition:none !important;}
   }
-  .pasos-fin{border:1px solid color-mix(in srgb, var(--hilo) 30%, transparent); background:color-mix(in srgb, var(--hilo) 6%, transparent); border-radius:18px; padding:16px 18px; margin:6px 0 14px;}
-  .pasos-fin .pf-t{font-weight:600; margin:0 0 8px;}
-  .pasos-fin ol{margin:0; padding-left:20px; line-height:1.6;}
-  .pf-aviso, .ok .pf-aviso{color:var(--hilo); font-weight:600; font-size:14px; margin:10px 0 0;}
+  .n-pedido{font-size:20px; color:var(--ink)!important; margin:4px 0 10px;}
+  .n-pedido b{color:var(--hilo); font-size:24px;}
+  .resumen-pedido{background:var(--mist); border-radius:var(--r-md); padding:6px 16px 12px; margin:18px 0;}
+  .rp-item{display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid color-mix(in srgb, var(--ink) 10%, transparent);}
+  .rp-item small{color:var(--ink-2);}
+  .rp-total{font-weight:700; border-bottom:0;}
 </style>
 </head>
 <body>
@@ -359,7 +361,7 @@
       <ol class="steps">
         <li><div class="k">1</div><h3>Elige tu pieza</h3><p>Desliza las fotos y pulsa «Elegir tela» en la que más te guste.</p></li>
         <li><div class="k">2</div><h3>Escoge la tela</h3><p>Amplía la imagen, busca tu tela y escribe su número.</p></li>
-        <li><div class="k">3</div><h3>Envía tu pedido</h3><p>Se envía por WhatsApp, ya escrito. No pagas nada hasta que te lo confirmemos.</p></li>
+        <li><div class="k">3</div><h3>Finaliza tu pedido</h3><p>Recibirás tu número de pedido al momento. No pagas nada ahora: te contacto para el pago.</p></li>
       </ol>
       <p class="note">Cada pieza se cose a mano, así que lleva su tiempo de preparación. Las telas cambian según la temporada y la disponibilidad.</p>
     </div>
@@ -888,7 +890,7 @@ function pintarCesta(){
       <div>
         <h4 class="q" id="lPago">Pago. <span>Cuando te lo confirmemos.</span></h4>
         <div class="opts cols2" role="radiogroup" aria-labelledby="lPago">
-          <label class="opt"><input type="radio" name="pago" value="Bizum" ${cliente.pago!=="Efectivo"?"checked":""}><span class="o-txt"><span class="o-t">Bizum</span><span class="o-s">Te pasamos el número por WhatsApp</span></span></label>
+          <label class="opt"><input type="radio" name="pago" value="Bizum" ${cliente.pago!=="Efectivo"?"checked":""}><span class="o-txt"><span class="o-t">Bizum</span><span class="o-s">Te paso los datos al contactarte</span></span></label>
           <label class="opt"><input type="radio" name="pago" value="Efectivo" ${cliente.pago==="Efectivo"?"checked":""}><span class="o-txt"><span class="o-t">Efectivo</span><span class="o-s">Al recogerlo en mano</span></span></label>
         </div>
       </div>
@@ -897,17 +899,8 @@ function pintarCesta(){
         <textarea id="fNotas" placeholder="Para cuándo lo necesitas, si es un regalo…"></textarea>
       </div>
       <div class="err" id="eEnvio"></div>
-      <div class="pasos-fin" role="note">
-        <p class="pf-t">Cómo se finaliza tu pedido</p>
-        <ol>
-          <li>Pulsa <b>Finalizar pedido</b>.</li>
-          <li>Se abrirá WhatsApp con tu pedido ya escrito.</li>
-          <li>Pulsa <b>enviar</b> en WhatsApp.</li>
-        </ol>
-        <p class="pf-aviso">Si no envías el mensaje de WhatsApp, el pedido no se hace efectivo.</p>
-      </div>
       <button class="pill block" type="submit" id="enviar">Finalizar pedido</button>
-      <p class="small">No pagas nada ahora: te contestamos por WhatsApp para confirmarlo.</p>
+      <p class="small">No pagas nada ahora: me pondré en contacto contigo para el pago.</p>
     </form>`;
   body.querySelectorAll("[data-rm]").forEach(b=>b.addEventListener("click", ()=>{ cesta.splice(+b.dataset.rm,1); guardarCesta(); pintarCesta(); }));
   body.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click", ()=>{ const k=+b.dataset.edit; cerrar("cartBg"); abrirElegir(cesta[k].producto_id, k); }));
@@ -921,16 +914,22 @@ function nuevaRef(){
   const a=new Date(), dd=n=>String(n).padStart(2,"0");
   return `ND-${dd(a.getDate())}${dd(a.getMonth()+1)}-${dd(a.getHours())}${dd(a.getMinutes())}`;
 }
-function guardarEnApp(ref, c, piezas){
-  if(SUPABASE_URL.startsWith("PEGAR")) return;
-  const cuerpo={ ref,
-    cliente:{nombre:c.nombre, apellidos:c.apellidos, telefono:c.telefono, instagram:c.instagram, entrega:c.entrega, pago:c.pago,
+async function crearPedido(c, piezas){
+  const cuerpo={
+    p_cliente:{nombre:c.nombre, apellidos:c.apellidos, telefono:c.telefono, instagram:c.instagram, entrega:c.entrega, pago:c.pago,
              calle:c.calle, piso:c.piso, cp:c.cp, poblacion:c.poblacion, notas:c.notas},
-    piezas: piezas.map(it=>({producto:it.producto, precio:it.precio, tela_nombre:it.tela_nombre, tela_img:(it.tela_img?new URL(it.tela_img, location.href).href:null),
+    p_piezas: piezas.map(it=>({producto:it.producto, precio:it.precio, tela_nombre:it.tela_nombre, tela_img:(it.tela_img?new URL(it.tela_img, location.href).href:null),
              numero:it.numero, opcion:it.opcion||null, nota:(it.nota!==undefined?it.nota:it.detalles)||null})) };
-  const h={"Content-Type":"application/json", "apikey":SUPABASE_KEY, "Prefer":"return=minimal"};
+  const h={"Content-Type":"application/json", "apikey":SUPABASE_KEY};
   if(SUPABASE_KEY.startsWith("eyJ")) h.Authorization="Bearer "+SUPABASE_KEY;
-  try{ fetch(SUPABASE_URL+"/rest/v1/pedidos_web", {method:"POST", headers:h, body:JSON.stringify(cuerpo), keepalive:true}).catch(()=>{}); }catch(e){}
+  const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(), 15000);
+  try{
+    const r=await fetch(SUPABASE_URL+"/rest/v1/rpc/crear_pedido", {method:"POST", headers:h, body:JSON.stringify(cuerpo), signal:ctl.signal});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    const n=await r.json();
+    if(!n) throw new Error("sin número");
+    return n;
+  } finally { clearTimeout(t); }
 }
 function resumenTexto(c, ref){
   ref = ref || nuevaRef();
@@ -974,7 +973,7 @@ function resumenTexto(c, ref){
   out.push(`Quedo a la espera de tu confirmación. ¡Muchas gracias! 🤍`);
   return out.join("\n");
 }
-function enviar(e){
+async function enviar(e){
   e.preventDefault();
   const c={
     nombre:$("#fNombre").value.trim(),
@@ -1000,29 +999,37 @@ function enviar(e){
   if(fallos.length){ $("#"+fallos[0]).focus(); $("#"+fallos[0]).scrollIntoView({behavior:"smooth", block:"center"}); return; }
   c.direccion = c.entrega==="Envío" ? [c.calle, c.piso, `${c.cp} ${c.poblacion}`].filter(Boolean).join(", ") : "";
   cliente={...c}; delete cliente.notas; store.set("ndeocaki_cliente", cliente);
-  const ref=nuevaRef();
-  const texto=resumenTexto(c, ref);
-  const url=`https://api.whatsapp.com/send?phone=${WHATSAPP}&text=${encodeURIComponent(texto)}`;
-  // Intentamos abrir WhatsApp directamente; si el navegador lo bloquea, queda el botón.
-  let abierto=null; try{ abierto=window.open(url, "_blank", "noopener"); }catch(err){}
-  guardarEnApp(ref, c, cesta.slice());
+  const piezas=cesta.slice();
+  const btn=$("#enviar"); btn.disabled=true; btn.textContent="Enviando tu pedido…"; $("#eEnvio").classList.remove("show");
+  let numero=null;
+  try{ numero=await crearPedido(c, piezas); }
+  catch(err){
+    btn.disabled=false; btn.textContent="Finalizar pedido";
+    const texto=resumenTexto(c, "");
+    const url=`https://api.whatsapp.com/send?phone=${WHATSAPP}&text=${encodeURIComponent(texto)}`;
+    $("#eEnvio").innerHTML=`No se ha podido enviar el pedido. Comprueba tu conexión y vuelve a pulsar «Finalizar pedido». Si sigue sin funcionar, <a href="${esc(url)}" target="_blank" rel="noopener">envíamelo por WhatsApp</a>.`;
+    $("#eEnvio").classList.add("show");
+    return;
+  }
   cesta=[]; guardarCesta();
+  const total=piezas.filter(it=>it.precio!=null).reduce((s,it)=>s+it.precio,0);
+  const consultar=piezas.some(it=>it.precio==null);
   $("#cartBody").innerHTML=`
     <div class="ok">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5Z"/><path d="M8.5 11.5h7M8.5 8.5h5"/></svg>
-      <h3>Falta un paso: envía el mensaje</h3>
-      <p>Tu pedido ya está escrito en WhatsApp. <b>Pulsa enviar</b> para que quede hecho y Nerea te contestará para confirmarlo.</p>
-      <p class="pf-aviso">Si no envías el mensaje, el pedido no se hace efectivo.</p>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg>
+      <h3>¡Pedido realizado!</h3>
+      <p class="n-pedido">Pedido nº <b>${esc(String(numero))}</b></p>
+      <p>Gracias, ${esc(c.nombre)}. Me pondré en contacto contigo a la mayor brevedad posible para realizar el pago${c.pago==="Bizum"?" por Bizum":c.pago==="Efectivo"?" en efectivo":""}.</p>
+      <p class="small">Guarda tu número de pedido por si necesitas consultarlo.</p>
     </div>
-    <a class="pill block" href="${esc(url)}" target="_blank" rel="noopener">Enviar el pedido por WhatsApp</a>
-    <div class="resumen">${esc(texto)}</div>
-    <button class="pill soft block" type="button" id="copiarTxt">Copiar el pedido</button>
-    <p class="small">¿Prefieres Instagram? Copia el pedido y pégalo en un mensaje a @ndeocaki.</p>`;
+    <div class="resumen-pedido">
+      ${piezas.map(it=>`<div class="rp-item"><span><b>${esc(it.producto)}</b>${it.tela_nombre?`<br><small>${esc(it.tela_nombre)} · nº ${esc(String(it.numero))}${it.opcion?` · ${esc(it.opcion)}`:""}</small>`:""}</span><span>${it.precio!=null?euros(it.precio):"A consultar"}</span></div>`).join("")}
+      <div class="rp-item rp-total"><span>Total</span><span>${euros(total)}${consultar?" + a consultar":""}</span></div>
+      <p class="small">${c.entrega==="Envío"?`Envío a ${esc(c.direccion)} (gastos de envío aparte)`:"Recogida en Terrassa"}</p>
+    </div>
+    <button class="pill soft block" type="button" id="cerrarFin">Volver a la tienda</button>`;
   $("#cartBg .sheet").scrollTop=0;
-  $("#copiarTxt").addEventListener("click", async ()=>{
-    try{ await navigator.clipboard.writeText(texto); toast("Pedido copiado"); }
-    catch(err){ const r=document.createRange(); r.selectNodeContents($(".resumen")); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); toast("Selecciona y copia el texto"); }
-  });
+  $("#cerrarFin").addEventListener("click", ()=>cerrar("cartBg"));
 }
 
 /* ===== Inicio ===== */
