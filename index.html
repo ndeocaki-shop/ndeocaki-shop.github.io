@@ -475,13 +475,8 @@
   }
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto;}
-    /* Sin desplazamientos ni escalados, pero se mantienen los fundidos y cambios de color que explican lo que pasa */
-    *:not(.sheet){animation:none !important;}
-    .sheet{animation:fundido .2s ease !important;}
-    *, *::before, *::after{transition-property:opacity, color, background-color, border-color, box-shadow !important;}
-    .chooser a:hover img, .arriba:hover{transform:none;}
+    *{animation:none !important; transition:none !important;}
   }
-  @keyframes fundido{from{opacity:0}}
   .n-pedido{font-size:20px; color:var(--ink)!important; margin:4px 0 10px;}
   .n-pedido b{color:var(--hilo); font-size:24px;}
   .resumen-pedido{background:var(--mist); border-radius:var(--r-md); padding:6px 16px 12px; margin:18px 0;}
@@ -507,12 +502,6 @@
   .acepto{display:flex; gap:12px; align-items:flex-start; font-size:15px; line-height:1.4; cursor:pointer;}
   .acepto input{width:20px; height:20px; flex:none; margin:1px 0 0; padding:0; accent-color:var(--hilo); background:none; border:0; box-shadow:none; cursor:pointer;}
   .acepto a{color:var(--hilo);}
-  /* ---------- Zonas táctiles (mín. 44 px) ---------- */
-  .bag{min-height:44px;}
-  .link{display:inline-block; padding-block:10px;}
-  .rail-nav button{width:44px; height:44px;}
-  .chip{padding-block:12px; line-height:20px;}
-  .foot a{display:inline-block; padding:12px 2px;}
 </style>
 </head>
 <body>
@@ -530,7 +519,7 @@
 
 <main id="inicio">
   <section class="hero" aria-label="Portada">
-    <img src="m/n-portada-1.webp" srcset="m/n-portada-1.webp 900w, n-portada-1.webp 1350w" sizes="100vw" fetchpriority="high" alt="Puesto de Ndeocaki en un market, con neceseres, monederos y estuches de cuadros sobre la mesa">
+    <img src="n-portada-1.webp" alt="Puesto de Ndeocaki en un market, con neceseres, monederos y estuches de cuadros sobre la mesa">
     <div class="wrap">
       <img class="script" src="logo.png" alt="" aria-hidden="true">
       <h1>Hecho a mano.<br>Pieza a pieza.</h1>
@@ -722,10 +711,6 @@ const PRODUCTOS = [
 ];
 const MARKETS = [...nv("market",4), "ig-market-0.webp"];
 const foto = (p,i) => p.imgs[i];
-const local = s => s && !/^(https?:|data:|blob:|\/)/.test(s);
-const mini = s => local(s) ? "mini/"+s : s;   /* miniaturas pequeñas */
-const med  = s => local(s) ? "m/"+s : s;      /* fotos a tamaño de pantalla */
-const SUAVE = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 
 /* ===== Utilidades ===== */
 const $ = s => document.querySelector(s);
@@ -739,16 +724,8 @@ const store = {
 
 /* ===== Hojas ===== */
 let abiertas = 0;
-const focoPrevio = [];
-/* Solo la capa de arriba (visor u hoja abierta) se puede usar; el resto queda inerte */
-function capas(){
-  const top = $("#viewer").classList.contains("open") ? $("#viewer") : [...document.querySelectorAll(".sheet-bg.open")].pop() || null;
-  document.querySelectorAll("body > header, body > main, body > footer, .sheet-bg, #viewer, #arriba").forEach(c => { c.inert = !!top && c!==top; });
-}
-function enfocar(el){ const d=el.querySelector('[role="dialog"]')||el; if(!d.hasAttribute("tabindex")) d.setAttribute("tabindex","-1"); requestAnimationFrame(()=>d.focus({preventScroll:true})); }
-function devolverFoco(){ const f=focoPrevio.pop(); if(f && document.contains(f) && !f.closest("[inert]")) f.focus({preventScroll:true}); }
-function abrir(id){ const el=document.getElementById(id); focoPrevio.push(document.activeElement); el.classList.add("open"); el.setAttribute("aria-hidden","false"); abiertas++; document.body.classList.add("locked"); capas(); enfocar(el); }
-function cerrar(id){ const el=document.getElementById(id); if(!el.classList.contains("open")) return; el.classList.remove("open"); el.setAttribute("aria-hidden","true"); abiertas=Math.max(0,abiertas-1); if(!abiertas) document.body.classList.remove("locked"); capas(); devolverFoco(); }
+function abrir(id){ const el=document.getElementById(id); el.classList.add("open"); el.setAttribute("aria-hidden","false"); abiertas++; document.body.classList.add("locked"); }
+function cerrar(id){ const el=document.getElementById(id); if(!el.classList.contains("open")) return; el.classList.remove("open"); el.setAttribute("aria-hidden","true"); abiertas=Math.max(0,abiertas-1); if(!abiertas) document.body.classList.remove("locked"); }
 document.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", () => cerrar(b.dataset.close)));
 document.querySelectorAll(".sheet-bg").forEach(bg => bg.addEventListener("click", e => { if(e.target===bg) cerrar(bg.id); }));
 document.addEventListener("keydown", e => {
@@ -760,7 +737,7 @@ document.addEventListener("keydown", e => {
 /* ===== Selector y secciones de producto ===== */
 function pintarProductos(){
   $("#chooser").innerHTML = PRODUCTOS.map(p => `
-    <li><a href="#p-${p.id}" data-go="${p.id}"><img src="${mini(foto(p,0))}" alt="" width="56" height="56"><span>${esc(p.corto)}</span></a></li>`).join("");
+    <li><a href="#p-${p.id}" data-go="${p.id}"><img src="${foto(p,0)}" alt=""><span>${esc(p.corto)}</span></a></li>`).join("");
 
   $("#coleccion").innerHTML = PRODUCTOS.map(p => `
     <section class="prod" id="p-${p.id}" aria-labelledby="t-${p.id}">
@@ -775,7 +752,7 @@ function pintarProductos(){
         </div>
       </div>
       <div class="rail" id="r-${p.id}">
-        ${Array.from({length:p.imgs.length},(_,i)=>`<button type="button" data-ver="${p.id}" data-i="${i}" aria-label="Ver foto ${i+1} de ${esc(p.nombre)}"><img src="${med(foto(p,i))}" alt="${esc(p.nombre)}, foto ${i+1}" loading="lazy" decoding="async"></button>`).join("")}
+        ${Array.from({length:p.imgs.length},(_,i)=>`<button type="button" data-ver="${p.id}" data-i="${i}" aria-label="Ver foto ${i+1} de ${esc(p.nombre)}"><img src="${foto(p,i)}" alt="${esc(p.nombre)}, foto ${i+1}" loading="lazy"></button>`).join("")}
       </div>
       ${p.imgs.length>2 ? `<div class="rail-nav"><button type="button" data-rail="r-${p.id}" data-dir="-1" aria-label="Fotos anteriores">‹</button><button type="button" data-rail="r-${p.id}" data-dir="1" aria-label="Más fotos">›</button></div>` : ""}
     </section>`).join("");
@@ -785,7 +762,7 @@ document.addEventListener("click", e => {
   const v = e.target.closest("[data-ver]");
   if(v){ const p=PRODUCTOS.find(x=>x.id===v.dataset.ver); return abrirVisor(Array.from({length:p.imgs.length},(_,i)=>({src:foto(p,i), titulo:p.nombre})), +v.dataset.i); }
   const r = e.target.closest("[data-rail]");
-  if(r){ const rail=document.getElementById(r.dataset.rail); const w=rail.querySelector("button").offsetWidth+16; rail.scrollBy({left:w*(+r.dataset.dir), behavior:SUAVE}); }
+  if(r){ const rail=document.getElementById(r.dataset.rail); const w=rail.querySelector("button").offsetWidth+16; rail.scrollBy({left:w*(+r.dataset.dir), behavior:"smooth"}); }
 });
 // Marca en el selector el producto que se está viendo
 function vigilarSecciones(){
@@ -795,7 +772,7 @@ function vigilarSecciones(){
       if(!en.isIntersecting) return;
       const id = en.target.classList.contains("prod") ? en.target.id.replace("p-","") : null;
       links.forEach((a,k) => a.classList.toggle("on", k===id));
-      const a = links.get(id); if(a){ const ul=$("#chooser"); const li=a.parentElement; ul.scrollTo({left: li.offsetLeft - ul.clientWidth/2 + li.offsetWidth/2, behavior:SUAVE}); }
+      const a = links.get(id); if(a){ const ul=$("#chooser"); const li=a.parentElement; ul.scrollTo({left: li.offsetLeft - ul.clientWidth/2 + li.offsetWidth/2, behavior:"smooth"}); }
     });
   }, {rootMargin:"-45% 0px -50% 0px"});
   document.querySelectorAll(".prod, .hero, .band, .markets, .how").forEach(s => io.observe(s));
@@ -805,7 +782,7 @@ function vigilarSecciones(){
 function pintarMarkets(){
   const m = $("#mosaic");
   if(MARKETS.length){
-    m.innerHTML = MARKETS.map((src,i)=>`<button type="button" data-mk="${i}" aria-label="Ver foto del market ${i+1}"><img src="${esc(med(src))}" alt="Market de Ndeocaki" loading="lazy" decoding="async"></button>`).join("");
+    m.innerHTML = MARKETS.map((src,i)=>`<button type="button" data-mk="${i}" aria-label="Ver foto del market ${i+1}"><img src="${esc(src)}" alt="Market de Ndeocaki" loading="lazy"></button>`).join("");
     m.addEventListener("click", e => { const b=e.target.closest("[data-mk]"); if(b) abrirVisor(MARKETS.map(s=>({src:s, titulo:"Markets"})), +b.dataset.mk); });
   } else {
     m.innerHTML = Array.from({length:6},()=>`<div class="ph">Foto del market</div>`).join("");
@@ -852,7 +829,7 @@ function pintarTelas(){
 }
 $("#telaChips").addEventListener("click", e=>{ const b=e.target.closest("[data-cat]"); if(!b) return; catSeccion=b.dataset.cat; pintarTelas(); });
 function telaHTML(t,i){
-  return `<button class="tela" type="button" data-tela="${i}" aria-label="Ver ${esc(t.nombre)}"><div class="sw" style="background-image:url('${esc(mini(t.imagen_url))}')"></div><div class="nm">${esc(t.nombre)}</div></button>`;
+  return `<button class="tela" type="button" data-tela="${i}" aria-label="Ver ${esc(t.nombre)}"><div class="sw" style="background-image:url('${esc(t.imagen_url)}')"></div><div class="nm">${esc(t.nombre)}</div></button>`;
 }
 function muestra(color,i){
   const n=i*6+1;
@@ -870,7 +847,7 @@ function abrirElegir(prodId, editIdx){
   const p = PRODUCTOS.find(x=>x.id===prodId);
   eleccion = {prod:p, telaIdx:null, cat:CATS()[0]||"Todas", opcion:p.opciones?p.opciones.valores[0].t:null, editIdx:(editIdx==null?null:editIdx)};
   const previo = editIdx!=null ? cesta[editIdx] : null;
-  $("#pickProd").innerHTML = `<img src="${mini(foto(p,0))}" alt=""><div><div class="t">${esc(p.nombre)}</div><div class="p">${p.precio!=null?euros(p.precio):"Precio a consultar"}</div></div>`;
+  $("#pickProd").innerHTML = `<img src="${foto(p,0)}" alt=""><div><div class="t">${esc(p.nombre)}</div><div class="p">${p.precio!=null?euros(p.precio):"Precio a consultar"}</div></div>`;
   $("#detalles").value=""; $("#detalles").placeholder=p.pista||"";
   $("#numTela").value=""; $("#numErr").classList.remove("show");
   $("#pickStep2").hidden = true;
@@ -901,16 +878,16 @@ function pintarCats(){
   $("#secCats").hidden = cs.length<2;
   $("#pickCats").innerHTML = cs.map(c=>{
     const ts = TELAS.filter(t=>t.cat===c);
-    return `<button type="button" class="opt" role="radio" aria-checked="${c===eleccion.cat}" data-cat="${esc(c)}"><span class="o-txt"><span class="o-t">${esc(c)}</span><span class="o-s">${ts.length} ${ts.length===1?"carta":"cartas"} de telas</span></span><img src="${esc(mini(ts[0].imagen_url))}" alt=""></button>`;
+    return `<button type="button" class="opt" role="radio" aria-checked="${c===eleccion.cat}" data-cat="${esc(c)}"><span class="o-txt"><span class="o-t">${esc(c)}</span><span class="o-s">${ts.length} ${ts.length===1?"carta":"cartas"} de telas</span></span><img src="${esc(ts[0].imagen_url)}" alt=""></button>`;
   }).join("");
 }
-$("#pickCats").addEventListener("click", e=>{ const b=e.target.closest("[data-cat]"); if(!b) return; eleccion.cat=b.dataset.cat; pintarCats(); pintarPicker(); $("#secTelas").scrollIntoView({behavior:SUAVE, block:"start"}); });
+$("#pickCats").addEventListener("click", e=>{ const b=e.target.closest("[data-cat]"); if(!b) return; eleccion.cat=b.dataset.cat; pintarCats(); pintarPicker(); $("#secTelas").scrollIntoView({behavior:"smooth", block:"start"}); });
 function pintarPicker(){
   if(!TELAS.length){ $("#pickTelas").innerHTML = `<div class="empty">Ahora mismo no hay telas publicadas. Vuelve a intentarlo en un rato.</div>`; return; }
   const idx = TELAS.map((t,i)=>i).filter(i=>CATS().length<2 || TELAS[i].cat===eleccion.cat);
   $("#pickTelas").innerHTML = `<div class="pick-grid" role="radiogroup" aria-labelledby="qTelas">${idx.map(i=>{
     const t=TELAS[i];
-    return `<button class="tela" type="button" role="radio" aria-checked="${i===eleccion.telaIdx}" data-tela="${i}"><div class="sw" style="background-image:url('${esc(mini(t.imagen_url))}')"></div><div class="nm">${esc(t.nombre)}</div></button>`;
+    return `<button class="tela" type="button" role="radio" aria-checked="${i===eleccion.telaIdx}" data-tela="${i}"><div class="sw" style="background-image:url('${esc(t.imagen_url)}')"></div><div class="nm">${esc(t.nombre)}</div></button>`;
   }).join("")}</div>`;
 }
 $("#pickTelas").addEventListener("click", e => {
@@ -919,11 +896,11 @@ $("#pickTelas").addEventListener("click", e => {
   pintarPicker();
   mostrarNumero();
   resumenPie();
-  requestAnimationFrame(()=>$("#pickStep2").scrollIntoView({behavior:SUAVE, block:"start"}));
+  requestAnimationFrame(()=>$("#pickStep2").scrollIntoView({behavior:"smooth", block:"start"}));
 });
 function mostrarNumero(){
   const t = TELAS[eleccion.telaIdx];
-  $("#chosenImg").src=med(t.imagen_url); $("#chosenImg").alt=t.nombre; $("#chosenName").textContent=t.nombre;
+  $("#chosenImg").src=t.imagen_url; $("#chosenImg").alt=t.nombre; $("#chosenName").textContent=t.nombre;
   $("#numTela").value=""; $("#numErr").classList.remove("show");
   pintarNumeros();
   $("#pickStep2").hidden=false;
@@ -931,13 +908,13 @@ function mostrarNumero(){
 // Atrás: deshace el último paso; si no hay nada que deshacer, vuelve a donde estaba
 $("#pickAtras").addEventListener("click", ()=>{
   const sheet=$("#pickBg .sheet");
-  if($("#numTela").value){ elegirNumero(""); $("#pickStep2").scrollIntoView({behavior:SUAVE, block:"start"}); return; }
-  if(eleccion.telaIdx!=null){ eleccion.telaIdx=null; $("#pickStep2").hidden=true; pintarPicker(); resumenPie(); $("#secTelas").scrollIntoView({behavior:SUAVE, block:"start"}); return; }
-  if(sheet.scrollTop>40){ sheet.scrollTo({top:0, behavior:SUAVE}); return; }
+  if($("#numTela").value){ elegirNumero(""); $("#pickStep2").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+  if(eleccion.telaIdx!=null){ eleccion.telaIdx=null; $("#pickStep2").hidden=true; pintarPicker(); resumenPie(); $("#secTelas").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+  if(sheet.scrollTop>40){ sheet.scrollTo({top:0, behavior:"smooth"}); return; }
   cerrar("pickBg");
   if(eleccion.editIdx!=null) abrirCesta();
 });
-$("#cartAtras").addEventListener("click", ()=>{ cerrar("cartBg"); $("#coleccion").scrollIntoView({behavior:SUAVE}); });
+$("#cartAtras").addEventListener("click", ()=>{ cerrar("cartBg"); $("#coleccion").scrollIntoView({behavior:"smooth"}); });
 function verElegida(){ const t=TELAS[eleccion.telaIdx]; abrirVisor([{src:t.imagen_url, titulo:t.nombre}],0,true); }
 $("#chosenBig").addEventListener("click", verElegida);
 $("#verGrande").addEventListener("click", verElegida);
@@ -973,9 +950,9 @@ function resumenPie(){
 $("#addBtn").addEventListener("click", () => {
   const p=eleccion.prod; let tela=null, numero="";
   if(TELAS.length){
-    if(eleccion.telaIdx===null){ toast("Elige primero una tela"); $("#secTelas").scrollIntoView({behavior:SUAVE, block:"start"}); return; }
+    if(eleccion.telaIdx===null){ toast("Elige primero una tela"); $("#secTelas").scrollIntoView({behavior:"smooth", block:"start"}); return; }
     tela=TELAS[eleccion.telaIdx]; numero=$("#numTela").value.trim();
-    if(!numero || (tela.nums.length && !tela.nums.includes(numero))){ $("#numErr").classList.add("show"); $("#pickStep2").scrollIntoView({behavior:SUAVE, block:"start"}); return; }
+    if(!numero || (tela.nums.length && !tela.nums.includes(numero))){ $("#numErr").classList.add("show"); $("#pickStep2").scrollIntoView({behavior:"smooth", block:"start"}); return; }
   }
   const nota=$("#detalles").value.trim();
   const det=[eleccion.opcion, nota].filter(Boolean).join(". ");
@@ -1004,7 +981,7 @@ function abrirVisor(lista, i, conNumero){
     ok.addEventListener("click", cerrarVisor);
   }
   pintarVisor();
-  const v=$("#viewer"); if(!v.classList.contains("open")) focoPrevio.push(document.activeElement); v.classList.add("open"); v.setAttribute("aria-hidden","false"); document.body.classList.add("locked"); capas();
+  const v=$("#viewer"); v.classList.add("open"); v.setAttribute("aria-hidden","false"); document.body.classList.add("locked");
   $("#vClose").focus({preventScroll:true});
 }
 function pintarVisor(){
@@ -1014,7 +991,7 @@ function pintarVisor(){
   $("#vTitle").textContent = it.titulo + (vLista.length>1 ? `   ${vIdx+1} de ${vLista.length}` : "");
   $("#vPrev").hidden = $("#vNext").hidden = vLista.length<2;
 }
-function cerrarVisor(){ const v=$("#viewer"); if(!v.classList.contains("open")) return; v.classList.remove("open"); v.setAttribute("aria-hidden","true"); if(!abiertas) document.body.classList.remove("locked"); capas(); devolverFoco(); }
+function cerrarVisor(){ const v=$("#viewer"); v.classList.remove("open"); v.setAttribute("aria-hidden","true"); if(!abiertas) document.body.classList.remove("locked"); }
 $("#vClose").addEventListener("click", cerrarVisor);
 $("#vPrev").addEventListener("click", ()=>{ vIdx=(vIdx-1+vLista.length)%vLista.length; pintarVisor(); });
 $("#vNext").addEventListener("click", ()=>{ vIdx=(vIdx+1)%vLista.length; pintarVisor(); });
@@ -1037,7 +1014,7 @@ function pintarCesta(){
   if(!cesta.length){
     body.innerHTML=`<div class="empty" style="background:var(--mist)">Aún no has elegido nada. Pulsa «Elegir tela» en la pieza que te guste.</div>
       <button class="pill soft block" type="button" id="verProd">Ver la colección</button>`;
-    $("#verProd").addEventListener("click", ()=>{ cerrar("cartBg"); $("#coleccion").scrollIntoView({behavior:SUAVE}); });
+    $("#verProd").addEventListener("click", ()=>{ cerrar("cartBg"); $("#coleccion").scrollIntoView({behavior:"smooth"}); });
     return;
   }
   const total=cesta.reduce((a,i)=>a+(+i.precio||0),0); const conConsulta=cesta.some(i=>i.precio==null);
@@ -1045,7 +1022,7 @@ function pintarCesta(){
     <div style="display:flex;flex-direction:column;gap:10px">
       ${cesta.map((it,k)=>`
         <div class="item">
-          <img src="${esc(mini(it.tela_img || (PRODUCTOS.find(p=>p.id===it.producto_id)||{imgs:[""]}).imgs[0]))}" alt="">
+          <img src="${esc(it.tela_img || (PRODUCTOS.find(p=>p.id===it.producto_id)||{imgs:[""]}).imgs[0])}" alt="">
           <div class="info">
             <div class="t">${esc(it.producto)}</div>
             ${it.tela_nombre?`<div class="s">${esc(it.tela_nombre)}, tela nº ${esc(it.numero)}</div>`:""}
@@ -1138,7 +1115,7 @@ function pintarCesta(){
     </form>`;
   body.querySelectorAll("[data-rm]").forEach(b=>b.addEventListener("click", ()=>{ cesta.splice(+b.dataset.rm,1); guardarCesta(); pintarCesta(); }));
   body.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click", ()=>{ const k=+b.dataset.edit; cerrar("cartBg"); abrirElegir(cesta[k].producto_id, k); }));
-  $("#seguir").addEventListener("click", ()=>{ cerrar("cartBg"); $("#coleccion").scrollIntoView({behavior:SUAVE}); });
+  $("#seguir").addEventListener("click", ()=>{ cerrar("cartBg"); $("#coleccion").scrollIntoView({behavior:"smooth"}); });
   const dir=()=>{ const ent=body.querySelector('input[name="entrega"]:checked').value; $("#dirBox").hidden = ent!=="Envío"; pintarTotales(ent); };
   body.querySelectorAll('input[name="entrega"]').forEach(r=>r.addEventListener("change",dir)); dir();
   [["fNombre","eNombre"],["fApellidos","eApellidos"],["fTel","eTel"],["fCalle","eCalle"],["fCP","eCP"],["fPob","ePob"]].forEach(([f,e])=>$("#"+f).addEventListener("input", ()=>$("#"+e).classList.remove("show")));
@@ -1241,7 +1218,7 @@ async function enviar(e){
     marca(c.poblacion, "fPob","ePob");
   }
   marca($("#fAcepto").checked, "fAcepto","eAcepto");
-  if(fallos.length){ $("#"+fallos[0]).focus(); $("#"+fallos[0]).scrollIntoView({behavior:SUAVE, block:"center"}); return; }
+  if(fallos.length){ $("#"+fallos[0]).focus(); $("#"+fallos[0]).scrollIntoView({behavior:"smooth", block:"center"}); return; }
   c.direccion = c.entrega==="Envío" ? [c.calle, c.piso, `${c.cp} ${c.poblacion}`].filter(Boolean).join(", ") : "";
   const sub=cesta.filter(it=>it.precio!=null).reduce((s,it)=>s+it.precio,0);
   c.gastos_envio=gastosEnvio(sub, c.entrega); c.total=sub+c.gastos_envio;
@@ -1298,8 +1275,7 @@ cargarTelas();
 <button class="arriba" type="button" id="arriba" aria-label="Volver al inicio de la página" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
 <script>
 (()=>{const b=document.getElementById("arriba");
-  let ly=window.scrollY, sube=false;
-  const ver=()=>{ const y=window.scrollY; if(Math.abs(y-ly)>6){ sube = y<ly; ly=y; } const abierta=document.querySelector(".open"); b.hidden = y < window.innerHeight*0.9 || !!abierta || !sube; };
+  const ver=()=>{ const abierta=document.querySelector(".open"); b.hidden = window.scrollY < window.innerHeight*0.9 || !!abierta; };
   addEventListener("scroll", ver, {passive:true}); addEventListener("resize", ver); setInterval(ver, 800);
   b.addEventListener("click", ()=>{ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches; scrollTo({top:0, behavior:reduce?"auto":"smooth"}); b.blur(); });
 })();
