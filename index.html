@@ -502,6 +502,32 @@
   .acepto{display:flex; gap:12px; align-items:flex-start; font-size:15px; line-height:1.4; cursor:pointer;}
   .acepto input{width:20px; height:20px; flex:none; margin:1px 0 0; padding:0; accent-color:var(--hilo); background:none; border:0; box-shadow:none; cursor:pointer;}
   .acepto a{color:var(--hilo);}
+  /* Opiniones */
+  .opiniones{background:var(--blush); padding:110px 0;}
+  .opiniones .head{text-align:center; margin-bottom:40px;}
+  .opiniones h2{font-size:clamp(36px, 5vw, 56px); line-height:1.06;}
+  .opiniones .desc{font-size:clamp(18px, 2vw, 22px); color:var(--ink-2); margin:12px auto 0; max-width:36ch;}
+  .op-media{margin-top:18px; font-size:17px; color:var(--ink);}
+  .op-media b{font-size:22px;}
+  .op-media .e{color:var(--hilo); letter-spacing:2px;}
+  .op-lista{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:16px;}
+  .op-card{background:#fff; border-radius:20px; padding:22px 22px 20px; box-shadow:0 10px 30px -22px rgba(0,0,0,.35); display:flex; flex-direction:column; gap:10px; min-width:0;}
+  .op-card .e{color:var(--hilo); font-size:18px; letter-spacing:2px;}
+  .op-card p{margin:0; font-size:16px; line-height:1.5; color:var(--ink); overflow-wrap:anywhere;}
+  .op-card .quien{font-size:14px; color:var(--ink-2); margin-top:auto;}
+  .op-card .quien b{color:var(--ink); font-weight:600;}
+  .op-vacio{grid-column:1/-1; text-align:center; color:var(--ink-2); font-size:17px; max-width:44ch; margin:0 auto;}
+  .op-cta{text-align:center; margin-top:34px;}
+  .op-mas{grid-column:1/-1; justify-self:center;}
+  .estrellas{display:flex; gap:6px;}
+  .estrellas button{font-size:38px; line-height:1; background:none; border:0; padding:4px; cursor:pointer; color:color-mix(in srgb, var(--ink) 18%, transparent); transition:transform .12s, color .12s;}
+  .estrellas button.on{color:var(--hilo);}
+  .estrellas button:active{transform:scale(.9);}
+  .estrellas button:focus-visible{outline:3px solid color-mix(in srgb, var(--hilo) 40%, transparent); border-radius:8px;}
+  select{width:100%; font:inherit; font-size:17px; color:var(--ink); background:var(--mist); border:1px solid transparent; border-radius:12px; padding:13px 14px; appearance:none; -webkit-appearance:none;}
+  select:focus{background:#fff; border-color:var(--hilo); outline:none;}
+  .trampa{position:absolute; left:-9999px; width:1px; height:1px; opacity:0;}
+  @media (max-width:720px){ .opiniones{padding:76px 0;} }
 </style>
 </head>
 <body>
@@ -552,6 +578,18 @@
         <p class="desc">Ven a tocar las telas y a llevarte tu pieza en persona.</p>
       </div>
       <div class="mosaic" id="mosaic"></div>
+    </div>
+  </section>
+
+  <section class="opiniones" id="opiniones" aria-labelledby="opTit">
+    <div class="wrap">
+      <div class="head">
+        <h2 id="opTit">Lo que dicen de Ndeocaki.</h2>
+        <p class="desc">Opiniones de quienes ya tienen su pieza.</p>
+        <div class="op-media" id="opMedia" hidden></div>
+      </div>
+      <div class="op-lista" id="opLista"><div class="op-vacio">Todavía no hay opiniones publicadas. ¿Ya tienes tu pieza? Cuéntanos qué te parece y sé la primera.</div></div>
+      <div class="op-cta"><button class="pill" type="button" id="opAbrir">Dejar mi opinión</button></div>
     </div>
   </section>
 
@@ -641,6 +679,50 @@
       <button class="x" type="button" data-close="cartBg" aria-label="Cerrar">×</button>
     </div>
     <div class="sheet-body" id="cartBody"></div>
+  </div>
+</div>
+
+<!-- Hoja: dejar opinión -->
+<div class="sheet-bg" id="opBg" aria-hidden="true">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="opHojaTit">
+    <div class="sheet-head">
+      <h3 id="opHojaTit">Tu opinión</h3>
+      <button class="x" type="button" data-close="opBg" aria-label="Cerrar">×</button>
+    </div>
+    <div class="sheet-body" id="opBody">
+      <form id="opForm" novalidate style="display:flex;flex-direction:column;gap:22px">
+        <div>
+          <h4 class="q" id="opEstTit">Valoración. <span>¿Cuántas estrellas le das?</span></h4>
+          <div class="estrellas" role="radiogroup" aria-labelledby="opEstTit" id="opEstrellas">
+            <button type="button" role="radio" aria-checked="false" data-e="1" aria-label="1 estrella">★</button><button type="button" role="radio" aria-checked="false" data-e="2" aria-label="2 estrellas">★</button><button type="button" role="radio" aria-checked="false" data-e="3" aria-label="3 estrellas">★</button><button type="button" role="radio" aria-checked="false" data-e="4" aria-label="4 estrellas">★</button><button type="button" role="radio" aria-checked="false" data-e="5" aria-label="5 estrellas">★</button>
+          </div>
+          <div class="err" id="eOpEst">Elige de 1 a 5 estrellas.</div>
+        </div>
+        <div>
+          <label class="label" for="opTexto">Tu comentario</label>
+          <textarea id="opTexto" maxlength="600" placeholder="¿Qué pieza tienes? ¿Qué tal la tela, el acabado, la entrega…?"></textarea>
+          <div class="err" id="eOpTexto">Escribe un comentario de al menos 5 letras.</div>
+        </div>
+        <div>
+          <label class="label" for="opProducto">¿Qué pieza tienes? <span class="opcional">(opcional)</span></label>
+          <select id="opProducto"><option value="">Elige…</option></select>
+        </div>
+        <div>
+          <label class="label" for="opNombre">Tu nombre</label>
+          <input id="opNombre" maxlength="40" autocomplete="given-name" placeholder="Laura">
+          <div class="err" id="eOpNombre">Escribe tu nombre.</div>
+          <p class="small" style="text-align:left;margin:8px 0 0">Se publicará tal como lo escribas. Si prefieres, pon solo tu nombre o tus iniciales.</p>
+        </div>
+        <input type="text" id="opWeb" tabindex="-1" autocomplete="off" aria-hidden="true" class="trampa">
+        <div>
+          <label class="acepto"><input type="checkbox" id="opAcepto"><span>Acepto que mi opinión y mi nombre se publiquen en esta web, según la <a href="privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</span></label>
+          <div class="err" id="eOpAcepto">Para publicar tu opinión tienes que aceptarlo.</div>
+        </div>
+        <div class="err" id="eOpEnvio"></div>
+        <button class="pill block" type="submit" id="opEnviar">Enviar opinión</button>
+        <p class="small">Revisamos las opiniones antes de publicarlas.</p>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -1278,6 +1360,76 @@ cargarTelas();
   const ver=()=>{ const abierta=document.querySelector(".open"); b.hidden = window.scrollY < window.innerHeight*0.9 || !!abierta; };
   addEventListener("scroll", ver, {passive:true}); addEventListener("resize", ver); setInterval(ver, 800);
   b.addEventListener("click", ()=>{ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches; scrollTo({top:0, behavior:reduce?"auto":"smooth"}); b.blur(); });
+})();
+
+/* ===== Opiniones ===== */
+(function(){
+  const h={"Content-Type":"application/json", "apikey":SUPABASE_KEY};
+  if(SUPABASE_KEY.startsWith("eyJ")) h.Authorization="Bearer "+SUPABASE_KEY;
+  const lista=$("#opLista"), media=$("#opMedia");
+  let todas=[], mostradas=6;
+  const est=n=>"★".repeat(n)+"☆".repeat(5-n);
+  const fecha=d=>{ try{ return new Date(d).toLocaleDateString("es-ES",{month:"long", year:"numeric"}); }catch(e){ return ""; } };
+  function pintar(){
+    if(!todas.length) return;
+    const m=todas.reduce((a,r)=>a+r.estrellas,0)/todas.length;
+    media.hidden=false;
+    media.innerHTML=`<span class="e" aria-hidden="true">${est(Math.round(m))}</span> <b>${m.toFixed(1).replace(".",",")}</b> · ${todas.length} ${todas.length===1?"opinión":"opiniones"}`;
+    lista.innerHTML=todas.slice(0,mostradas).map(r=>`
+      <article class="op-card">
+        <div class="e" aria-label="${r.estrellas} de 5 estrellas">${est(r.estrellas)}</div>
+        <p>${esc(r.texto)}</p>
+        <div class="quien"><b>${esc(r.nombre)}</b>${r.producto?` · ${esc(r.producto)}`:""}${r.creado?` · ${fecha(r.creado)}`:""}</div>
+      </article>`).join("") + (todas.length>mostradas?`<button class="pill soft op-mas" type="button" id="opMas">Ver más opiniones</button>`:"");
+    const mas=$("#opMas"); if(mas) mas.addEventListener("click",()=>{ mostradas+=6; pintar(); });
+  }
+  async function cargar(){
+    try{
+      const r=await fetch(SUPABASE_URL+"/rest/v1/rpc/resenas_publicadas",{method:"POST", headers:h, body:"{}"});
+      if(!r.ok) return; todas=await r.json(); pintar();
+    }catch(e){}
+  }
+  cargar();
+  // formulario
+  const sel=$("#opProducto");
+  PRODUCTOS.forEach(p=>{ const o=document.createElement("option"); o.value=p.nombre; o.textContent=p.nombre; sel.appendChild(o); });
+  let estrellas=0;
+  const botones=[...document.querySelectorAll("#opEstrellas button")];
+  const marcar=n=>{ estrellas=n; botones.forEach(b=>{ const v=+b.dataset.e; b.classList.toggle("on", v<=n); b.setAttribute("aria-checked", v===n?"true":"false"); }); $("#eOpEst").classList.remove("show"); };
+  botones.forEach(b=>b.addEventListener("click",()=>marcar(+b.dataset.e)));
+  $("#opAbrir").addEventListener("click",()=>{ abrir("opBg"); $("#opBg .sheet").scrollTop=0; });
+  ["opTexto","opNombre"].forEach(id=>$("#"+id).addEventListener("input",()=>$("#e"+id.replace("op","Op")).classList.remove("show")));
+  $("#opAcepto").addEventListener("change",()=>$("#eOpAcepto").classList.remove("show"));
+  $("#opForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const nombre=$("#opNombre").value.trim(), texto=$("#opTexto").value.trim(), producto=sel.value;
+    let primero=null; const marca=(ok,id,campo)=>{ if(!ok){ $("#"+id).classList.add("show"); primero=primero||campo; } };
+    marca(estrellas>=1,"eOpEst","opEstrellas");
+    marca(texto.length>=5,"eOpTexto","opTexto");
+    marca(nombre.length>=1,"eOpNombre","opNombre");
+    marca($("#opAcepto").checked,"eOpAcepto","opAcepto");
+    if(primero){ const el=$("#"+primero); el.scrollIntoView({behavior:"smooth", block:"center"}); if(el.focus) el.focus(); return; }
+    if($("#opWeb").value){ gracias(); return; } // robot
+    const btn=$("#opEnviar"); btn.disabled=true; btn.textContent="Enviando…"; $("#eOpEnvio").classList.remove("show");
+    try{
+      const r=await fetch(SUPABASE_URL+"/rest/v1/rpc/dejar_resena",{method:"POST", headers:h, body:JSON.stringify({p_nombre:nombre, p_producto:producto||null, p_estrellas:estrellas, p_texto:texto})});
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      gracias();
+    }catch(err){
+      btn.disabled=false; btn.textContent="Enviar opinión";
+      $("#eOpEnvio").textContent="No se ha podido enviar tu opinión. Comprueba tu conexión y vuelve a intentarlo.";
+      $("#eOpEnvio").classList.add("show");
+    }
+  });
+  function gracias(){
+    $("#opBody").innerHTML=`<div class="ok">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg>
+      <h3>¡Gracias por tu opinión!</h3>
+      <p>La revisaremos y aparecerá en la web en breve.</p>
+    </div>
+    <button class="pill soft block" type="button" data-close="opBg" id="opCerrar">Volver a la web</button>`;
+    $("#opCerrar").addEventListener("click",()=>cerrar("opBg"));
+  }
 })();
 </script>
 </body>
